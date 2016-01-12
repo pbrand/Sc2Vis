@@ -3,9 +3,12 @@ import protocol39576
 import json
 
 Path = '../Data/Raw/'
-File = '0c164dd4b2808634e3e40457d1da9ec5.SC2Replay'
+#File = '0c164dd4b2808634e3e40457d1da9ec5.SC2Replay'
+File = 'ggtracker_6395368.SC2Replay'
 
 archive = mpyq.MPQArchive(Path+File)
+
+# NOTE: TO GET TIME OF MATCH: a=(m_timeUTC / 10000000) - 11644473600 (Then test it with date -d @a)
 
 # Read the protocol header, this can be read with any protocol
 contents = archive.header['user_data_header']['content']
