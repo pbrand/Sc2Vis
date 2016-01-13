@@ -5,14 +5,14 @@ from sc2reader import Sc2ReplayReader
 
 class Sc2ReplayParser:
     def __init__(self, path_to_replay):
-        self.__replay_path = path_to_replay
+        self.__replay_path = path_to_replay # Expects data to be in a directory called Raw
         self.__reader = Sc2ReplayReader(self.__replay_path)
-        self.__output_path = '../Data/JSON/'
+        self.__output_path = string.split(self.__replay_path, 'Raw/')[0] + 'JSON/'
     
     def parse(self):
-        print 'Reading file: '+self.__replay_path
         replay_name = string.rsplit(self.__replay_path,'/',1)[1] # extract filename + extension
         replay_name = string.split(replay_name, '.')[0] # remove extension
+        print 'Reading file: '+replay_name
         
         parsed_details = {}
         parsed_economy_data = {}
@@ -61,12 +61,3 @@ class Sc2ReplayParser:
     
     def __parse_economy_data(self, output_list):
         pass
-
-
-    
-# NOTE: TO GET TIME OF MATCH: a=(m_timeUTC / 10000000) - 11644473600 (Then test it with date -d @a)
-path_to_data = '../Data/Raw/'
-f = '0c164dd4b2808634e3e40457d1da9ec5.SC2Replay'
-p = Sc2ReplayParser(path_to_data + f)
-p.parse()
-
