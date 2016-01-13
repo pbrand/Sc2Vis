@@ -15,7 +15,7 @@ class Sc2ReplayParser:
         print 'Reading file: '+replay_name
         
         parsed_details = {}
-        parsed_economy_data = {}
+        parsed_economy_data = []
         self.__parse_replay_details(parsed_details)
         self.__parse_economy_data(parsed_economy_data)
         
@@ -60,4 +60,12 @@ class Sc2ReplayParser:
         output_list['playerList'] = parsed_player_list
     
     def __parse_economy_data(self, output_list):
-        pass
+        for event in self.__reader.get_replay_tracker_events():
+            if event['_eventid'] == 0: # NNet.Replay.Tracker.SPlayerStatsEvent
+                economy_entry = {}
+                economy_entry['gameloop'] = event['_gameloop']
+                economy_entry['playerId'] = event['m_playerId'] # WIP add events under each playerId, but don't know how to link all playerId's yet.
+                # capute all stats
+                for stat in event['m_stats'].keys():
+                    economy_entry[string.strip(stat,'m_')] = event['m_stats'][stat]
+                output_list.append(economy_entry)
