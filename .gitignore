@@ -1,3 +1,4 @@
 Data/
 Sc2Env/
 *.SC2Replay
+*.pyc

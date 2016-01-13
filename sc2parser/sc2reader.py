@@ -8,15 +8,15 @@ from s2protocol.decoders import *
 # This Class reads a given replay file and extracts Event data and Replay details
 # which are returned as standard Python dictionaries or a list of dictionaries (events)
 class Sc2ReplayReader:
-    def __init__(self, replayPath):
-        self.__archive = mpyq.MPQArchive(replayPath)
+    def __init__(self, replay_path):
+        self.__archive = mpyq.MPQArchive(replay_path)
         
         # Read the protocol header, this can be read with any protocol
         contents = self.__archive.header['user_data_header']['content']
-        header = initial_protocol.decode_replay_header(contents)
+        self.__header = initial_protocol.decode_replay_header(contents)
         
         # The header's baseBuild determines which protocol to use
-        self.__base_build = header['m_version']['m_baseBuild']
+        self.__base_build = self.__header['m_version']['m_baseBuild']
         try:
             self.__protocol = __import__('s2protocol'+'.protocol%s' % self.__base_build,fromlist=['protocol2'])
         except:
@@ -25,6 +25,9 @@ class Sc2ReplayReader:
     
     def get_replay_protocol_version(self):
         return self.__base_build
+    
+    def get_replay_header(self):
+        return self.__header
     
     def get_replay_init_data(self):
         try:
