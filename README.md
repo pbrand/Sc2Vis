@@ -1,6 +1,12 @@
 # Sc2Vis
 Starcraft II Visualization course Datavisualization
 
+At the time of writing the SC2Reader project was outdated, hence we could not fully use it to extract data from the latest Starcraft II Expansion pack (Legacy of the Void). Because of the limited time available we decided to quickly write our own parser. 
+For this parser we used code and documentation from the following projects:
+ * [S2Protocol](https://github.com/Blizzard/s2protocol)
+ * [SC2Reader](https://github.com/GraylinKim/sc2reader)
+ * [heroes-of-the-storm-replay-parser](https://github.com/karlgluck/heroes-of-the-storm-replay-parser)
+
 # Replay Data
 ## Events
 ### Game Events
@@ -130,3 +136,53 @@ Starcraft II Visualization course Datavisualization
 | 7 | NNet.Replay.Tracker.SUnitDoneEvent |
 | 8 | NNet.Replay.Tracker.SUnitPositionsEvent |
 | 9 | NNet.Replay.Tracker.SPlayerSetupEvent |
+
+#### NNet.Replay.Tracker.SPlayerStatsEvent
+Player Stats events are generated for all players that were in the game, even if they've since
+left, every 10 seconds.  
+This event contains the following keys:
+ * *m_playerId*: The Id of the player
+ * *_eventid*: The Id of the event
+ * *_event*: The name of the event
+ * *_bits*: 
+ * *_gameloop*: **NOTE** gameloop is a unit of time in the game. *_gameloop / 16.0* gives seconds passed since start of the game 
+ * *m_stats*: Container of player stats:
+    * *m_scoreValueFoodMade*: **NOTE** food is a generic term for Terran Supply, Zerg Control and Protoss Psi.
+    * *m_scoreValueFoodUsed*
+    * *m_scoreValueMineralsCollectionRate*
+    * *m_scoreValueMineralsCurrent*
+    * *m_scoreValueMineralsFriendlyFireArmy*
+    * *m_scoreValueMineralsFriendlyFireEconomy*
+    * *m_scoreValueMineralsFriendlyFireTechnology*
+    * *m_scoreValueMineralsKilledArmy*
+    * *m_scoreValueMineralsKilledEconomy*
+    * *m_scoreValueMineralsKilledTechnology*
+    * *m_scoreValueMineralsLostArmy*
+    * *m_scoreValueMineralsLostEconomy*
+    * *m_scoreValueMineralsLostTechnology*
+    * *m_scoreValueMineralsUsedActiveForces*
+    * *m_scoreValueMineralsUsedCurrentArmy*
+    * *m_scoreValueMineralsUsedCurrentEconomy*
+    * *m_scoreValueMineralsUsedCurrentTechnology*
+    * *m_scoreValueMineralsUsedInProgressArmy*
+    * *m_scoreValueMineralsUsedInProgressEconomy*
+    * *m_scoreValueMineralsUsedInProgressTechnology*
+    * *m_scoreValueVespeneCollectionRate*
+    * *m_scoreValueVespeneCurrent*
+    * *m_scoreValueVespeneFriendlyFireArmy*
+    * *m_scoreValueVespeneFriendlyFireEconomy*
+    * *m_scoreValueVespeneFriendlyFireTechnology*
+    * *m_scoreValueVespeneKilledArmy*
+    * *m_scoreValueVespeneKilledEconomy*
+    * *m_scoreValueVespeneKilledTechnology*
+    * *m_scoreValueVespeneLostArmy*
+    * *m_scoreValueVespeneLostEconomy*
+    * *m_scoreValueVespeneLostTechnology*
+    * *m_scoreValueVespeneUsedActiveForces*
+    * *m_scoreValueVespeneUsedCurrentArmy*
+    * *m_scoreValueVespeneUsedCurrentEconomy*
+    * *m_scoreValueVespeneUsedCurrentTechnology*
+    * *m_scoreValueVespeneUsedInProgressArmy*
+    * *m_scoreValueVespeneUsedInProgressEconomy*
+    * *m_scoreValueVespeneUsedInProgressTechnology*
+    * *m_scoreValueWorkersActiveCount*
