@@ -3,13 +3,10 @@ Starcraft II Visualization course Datavisualization
 
 # Replay Data
 ## Events
-The event id's and names are gathered from Blizzard's s2protocol python package (up to date with file: protocol39576.py)
-Note that the Event Names in the tables are the shortened names, an original event named: **NNet.Game.SUserFinishedLoadingSyncEvent** is called **SUserFinishedLoadingSyncEvent** in our tables.
 ### Game Events
-Original Game Event Names are of the following form: **NNet.Game.***Event name*.
 
-| *Event Id*  | *Event Name*  |
-|----------|-----------|
+| Event Id | Event Name |
+|----------|---------|
 | 5 | NNet.Game.SUserFinishedLoadingSyncEvent |
 | 7 | NNet.Game.SUserOptionsEvent |
 | 9 | NNet.Game.SBankFileEvent |
@@ -109,30 +106,27 @@ Original Game Event Names are of the following form: **NNet.Game.***Event name*.
 | 111 | NNet.Game.STriggerProfilerLoggingFinishedEvent |
 | 112 | NNet.Game.SHeroTalentTreeSelectionPanelToggledEvent |
 
-
 ### Message Events
-Original Message Event Names are of the following form: **NNet.Game.***Event name*.
 
-| Event Id   | Event Name                |
-|------------|---------------------------|
-| 0          | SChatMessage              |
-| 1          | SPingMessage              |
-| 2          | SLoadingProgressMessage   |
-| 3          | SServerPingMessage        |
-| 4          | SReconnectNotifyMessage   |
+| Event Id | Event Name |
+|----------|---------|
+| 0 | NNet.Game.SChatMessage |
+| 1 | NNet.Game.SPingMessage |
+| 2 | NNet.Game.SLoadingProgressMessage |
+| 3 | NNet.Game.SServerPingMessage |
+| 4 | NNet.Game.SReconnectNotifyMessage |
 
 ### Tracker Events
-Original Tracker Event Names are of the following form: **NNet.Replay.Tracker.***Event name*.
 
-| Event Id   | Event Name              |
-|------------|-------------------------|
-| 0          | SPlayerStatsEvent       |
-| 1          | SUnitBornEvent          |
-| 2          | SUnitDiedEvent          |
-| 3          | SUnitOwnerChangeEvent   |
-| 4          | SUnitTypeChangeEvent    |
-| 5          | SUpgradeEvent           |
-| 6          | SUnitInitEvent          |
-| 7          | SUnitDoneEvent          |
-| 8          | SUnitPositionsEvent     |
-| 9          | SPlayerSetupEvent       |
+| Event Id | Event Name |
+|----------|---------|
+| 0 | NNet.Replay.Tracker.SPlayerStatsEvent |
+| 1 | NNet.Replay.Tracker.SUnitBornEvent |
+| 2 | NNet.Replay.Tracker.SUnitDiedEvent |
+| 3 | NNet.Replay.Tracker.SUnitOwnerChangeEvent |
+| 4 | NNet.Replay.Tracker.SUnitTypeChangeEvent |
+| 5 | NNet.Replay.Tracker.SUpgradeEvent |
+| 6 | NNet.Replay.Tracker.SUnitInitEvent |
+| 7 | NNet.Replay.Tracker.SUnitDoneEvent |
+| 8 | NNet.Replay.Tracker.SUnitPositionsEvent |
+| 9 | NNet.Replay.Tracker.SPlayerSetupEvent |
