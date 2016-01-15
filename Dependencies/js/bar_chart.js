@@ -19,6 +19,9 @@
       dataset.push(obj);
   }
 
+  console.log("Data format for bar_chart:");
+  console.log(tempData_);
+
   stackedBarChart("bar_chart", dataset, 30);
 })(window.d3);
 
@@ -83,8 +86,6 @@ function stackedBarChart(divId, dataset, height) {
     return x / xMax;
   }
 
-  console.log(svg.select("g"));
-
   var xPos_1 = (fraction(dataset[0][0].x) * totalWidth) / 2.0;
   var xPos_2 = (fraction(dataset[1][0].x) * totalWidth) / 2.0;
   var legend = svg.selectAll('.legend')
@@ -93,7 +94,6 @@ function stackedBarChart(divId, dataset, height) {
     .append('g')
     .attr('class', 'legend')
     .attr('transform', function(d, i) {
-      console.log(d);
       var horz = (i * xPos_2) + xPos_1 - 10;
       var vert = 8 + (yScale.rangeBand() / 2);
       return 'translate(' + horz + ',' + vert + ')';

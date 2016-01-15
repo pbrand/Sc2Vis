@@ -27,7 +27,8 @@ var legendSpacing = 4;
     tempData1_.scoreValueVespeneUsedCurrentTechnology = +d.scoreValueVespeneUsedCurrentTechnology;
   });
 
-  console.log(tempData_); console.log(tempData1_);
+  console.log("Data format for donut_chart:");
+  console.log(tempData_);
 
   donut_chart("#chart_m_0", tempData_);
   donut_chart("#chart_v_0", tempData1_);
