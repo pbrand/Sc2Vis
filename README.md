@@ -195,11 +195,11 @@ This variable has the following structure:
 ```
 data
  +--- baseBuild
- +--- gameTime *In seconds*
+ +--- gameTime //In seconds
  +--- elapsedGameLoops
  +--- gameSpeed
  +--- mapName
- +--- playerList *which contains a dictionary per player containing:*
+ +--- playerList //which contains a dictionary per player containing:
  |       +--- control
  |       +--- race
  |       +--- name
@@ -218,60 +218,61 @@ data
 ```
 
 ## Economy
-The parser stores all information per *UserId* so if a replay file describes a match of 2 players, the following data is stored per player:
+The parser stores all information per *userId*. The hierarchy of the data is as follows:
 ```
 economy
-   +---UserId 
-        +--- WorkerActive
-        +--- Food
-        |      +--- Made
-        |      +--- Used
-        +--- Minerals
-        |      +--- CollectionRate
-        |      +--- Current
-        |      +--- Army
-        |      |      +--- FriendlyFire
-        |      |      +--- Killed
-        |      |      +--- Lost
-        |      |      +--- Used
-        |      |      +--- UsedCurrent
-        |      |      +--- UsedInProgress
-        |      +--- Economy
-        |      |      +--- FriendlyFire
-        |      |      +--- Killed
-        |      |      +--- Lost
-        |      |      +--- Used
-        |      |      +--- UsedCurrent
-        |      |      +--- UsedInProgress
-        |      +--- Technology
-        |             +--- FriendlyFire
-        |             +--- Killed
-        |             +--- Lost
-        |             +--- Used
-        |             +--- UsedCurrent
-        |             +--- UsedInProgress
-        +--- Vespene
-               +--- CollectionRate
-               +--- Current
-               +--- Army
-               |      +--- FriendlyFire
-               |      +--- Killed
-               |      +--- Lost
-               |      +--- Used
-               |      +--- UsedCurrent
-               |      +--- UsedInProgress
-               +--- Economy
-               |      +--- FriendlyFire
-               |      +--- Killed
-               |      +--- Lost
-               |      +--- Used
-               |      +--- UsedCurrent
-               |      +--- UsedInProgress
-               +--- Technology
-                      +--- FriendlyFire
-                      +--- Killed
-                      +--- Lost
-                      +--- Used
-                      +--- UsedCurrent
-                      +--- UsedInProgress
+   +---#userId // Contains a list with entries of the following structure:
+        +--- gameloop
+        +--- workersActive
+        +--- food
+        |      +--- made
+        |      +--- used
+        +--- minerals
+               +--- collectionRate
+               +--- current
+               +--- army
+               |      +--- friendlyFire
+               |      +--- killed
+               |      +--- lost
+               |      +--- used
+               |      +--- usedCurrent
+               |      +--- usedInProgress
+               +--- economy
+               |      +--- friendlyFire
+               |      +--- killed
+               |      +--- lost
+               |      +--- used
+               |      +--- usedCurrent
+               |      +--- usedInProgress
+               +--- technology
+                      +--- friendlyFire
+                      +--- killed
+                      +--- lost
+                      +--- used
+                      +--- usedCurrent
+                      +--- usedInProgress
+        +--- vespene
+               +--- collectionRate
+               +--- current
+               +--- army
+               |      +--- friendlyFire
+               |      +--- killed
+               |      +--- lost
+               |      +--- used
+               |      +--- usedCurrent
+               |      +--- usedInProgress
+               +--- economy
+               |      +--- friendlyFire
+               |      +--- killed
+               |      +--- lost
+               |      +--- used
+               |      +--- usedCurrent
+               |      +--- usedInProgress
+               +--- technology
+                      +--- friendlyFire
+                      +--- killed
+                      +--- lost
+                      +--- used
+                      +--- usedCurrent
+                      +--- usedInProgress
 ```
