@@ -186,3 +186,92 @@ This event contains the following keys:
     * *m_scoreValueVespeneUsedInProgressEconomy*
     * *m_scoreValueVespeneUsedInProgressTechnology*
     * *m_scoreValueWorkersActiveCount*
+
+# Sc2ReplayParser
+This is our parser, which uses our Sc2ReplayReader to retrieve the previously documented data structures and parses them to JSON format. Each replay gets its own file which contains the variables *details* and *economy*.
+
+## Details
+This variable has the following structure:
+```
+data
+ +--- baseBuild
+ +--- gameTime *In seconds*
+ +--- elapsedGameLoops
+ +--- gameSpeed
+ +--- mapName
+ +--- playerList *which contains a dictionary per player containing:*
+ |       +--- control
+ |       +--- race
+ |       +--- name
+ |       +--- color
+ |       |   +--- r
+ |       |   +--- g
+ |       |   +--- b
+ |       |   +--- a
+ |       +--- region
+ |       +--- handicap
+ |       +--- teamId
+ |       +--- observe
+ |       +--- result
+ +--- gameStart *As a UTC/GMT Timestamp*
+ +--- isBlizzardMap
+```
+
+## Economy
+The parser stores all information per *UserId* so if a replay file describes a match of 2 players, the following data is stored per player:
+```
+economy
+   +---UserId 
+        +--- WorkerActive
+        +--- Food
+        |      +--- Made
+        |      +--- Used
+        +--- Minerals
+        |      +--- CollectionRate
+        |      +--- Current
+        |      +--- Army
+        |      |      +--- FriendlyFire
+        |      |      +--- Killed
+        |      |      +--- Lost
+        |      |      +--- Used
+        |      |      +--- UsedCurrent
+        |      |      +--- UsedInProgress
+        |      +--- Economy
+        |      |      +--- FriendlyFire
+        |      |      +--- Killed
+        |      |      +--- Lost
+        |      |      +--- Used
+        |      |      +--- UsedCurrent
+        |      |      +--- UsedInProgress
+        |      +--- Technology
+        |             +--- FriendlyFire
+        |             +--- Killed
+        |             +--- Lost
+        |             +--- Used
+        |             +--- UsedCurrent
+        |             +--- UsedInProgress
+        +--- Vespene
+               +--- CollectionRate
+               +--- Current
+               +--- Army
+               |      +--- FriendlyFire
+               |      +--- Killed
+               |      +--- Lost
+               |      +--- Used
+               |      +--- UsedCurrent
+               |      +--- UsedInProgress
+               +--- Economy
+               |      +--- FriendlyFire
+               |      +--- Killed
+               |      +--- Lost
+               |      +--- Used
+               |      +--- UsedCurrent
+               |      +--- UsedInProgress
+               +--- Technology
+                      +--- FriendlyFire
+                      +--- Killed
+                      +--- Lost
+                      +--- Used
+                      +--- UsedCurrent
+                      +--- UsedInProgress
+```
