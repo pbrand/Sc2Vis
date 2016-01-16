@@ -228,29 +228,29 @@ economy
         |      +--- made
         |      +--- used
         +--- minerals
-               +--- collectionRate
-               +--- current
-               +--- army
-               |      +--- friendlyFire
-               |      +--- killed
-               |      +--- lost
-               |      +--- used
-               |      +--- usedCurrent
-               |      +--- usedInProgress
-               +--- economy
-               |      +--- friendlyFire
-               |      +--- killed
-               |      +--- lost
-               |      +--- used
-               |      +--- usedCurrent
-               |      +--- usedInProgress
-               +--- technology
-                      +--- friendlyFire
-                      +--- killed
-                      +--- lost
-                      +--- used
-                      +--- usedCurrent
-                      +--- usedInProgress
+        |      +--- collectionRate
+        |      +--- current
+        |      +--- army
+        |      |      +--- friendlyFire
+        |      |      +--- killed
+        |      |      +--- lost
+        |      |      +--- used
+        |      |      +--- usedCurrent
+        |      |      +--- usedInProgress
+        |      +--- economy
+        |      |      +--- friendlyFire
+        |      |      +--- killed
+        |      |      +--- lost
+        |      |      +--- used
+        |      |      +--- usedCurrent
+        |      |      +--- usedInProgress
+        |      +--- technology
+        |             +--- friendlyFire
+        |             +--- killed
+        |             +--- lost
+        |             +--- used
+        |             +--- usedCurrent
+        |             +--- usedInProgress
         +--- vespene
                +--- collectionRate
                +--- current
