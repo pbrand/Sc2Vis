@@ -346,6 +346,10 @@ td, th {
         text-align: center;
         font-size: 15px;
       }
+
+      #statistics_bars > div {
+        /*margin-left: 20%;*/
+      }
       .tooltip {
         background: #eee;
         box-shadow: 0 0 5px #999999;

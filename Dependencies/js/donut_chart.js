@@ -1,4 +1,4 @@
-var startTime = 0, endTime = 1492;
+var startTime = 1200, endTime = 1300;
 var width = 360 / 2;
 var height = 360 / 2;
 var radius = Math.min(width, height) / 2;
@@ -9,30 +9,50 @@ var legendSpacing = 4;
 (function(d3) {
   'use strict';
 
-  var tempData = economy[0];
+  for (var x in economy) {
+    if (x == 1) break;
+    // Take data of current player
+    var playerData = economy[x];
+    var playerArrayMinerals = [], playerArrayVespene = [];
+    var mineralsUsed = {}, mineralsLost = {}, vespeneUsed = {}, vespeneLost = {};
 
-  var tempData_ = {};
-  tempData.forEach(function(d, i) {
-    if (!withinTimeFrame(d.gameloop, startTime, endTime)) return;
-    tempData_.scoreValueMineralsUsedCurrentArmy = +d.scoreValueMineralsUsedCurrentArmy;
-    tempData_.scoreValueMineralsUsedCurrentEconomy = +d.scoreValueMineralsUsedCurrentEconomy;
-    tempData_.scoreValueMineralsUsedCurrentTechnology = +d.scoreValueMineralsUsedCurrentTechnology;
-  });
+    playerData.forEach(function(d, i) {
+      if (!withinTimeFrame(d.gameloop, startTime, endTime)) return;
 
-  var tempData1_ = {};
-  tempData.forEach(function(d, i) {
-    if (!withinTimeFrame(d.gameloop, startTime, endTime)) return;
-    tempData1_.scoreValueVespeneUsedCurrentArmy = +d.scoreValueVespeneUsedCurrentArmy;
-    tempData1_.scoreValueVespeneUsedCurrentEconomy = +d.scoreValueVespeneUsedCurrentEconomy;
-    tempData1_.scoreValueVespeneUsedCurrentTechnology = +d.scoreValueVespeneUsedCurrentTechnology;
-  });
+      // Minerals:
+      var mineralData = d.minerals;
+      // # Used Current
+      mineralsUsed.Army = +mineralData.army.usedCurrent;
+      mineralsUsed.Economy = +mineralData.economy.usedCurrent;
+      mineralsUsed.Technology = +mineralData.technology.usedCurrent;
+      // # Lost
+      mineralsLost.FriendlyFire = +mineralData.army.friendlyFire;
+      mineralsLost.Killed = +mineralData.economy.killed;
+      mineralsLost.Lost = +mineralData.technology.lost;
 
-  console.log("Data format for donut_chart:");
-  console.log(tempData_);
+      // Vespene:
+      var vespeneData = d.vespene;
+      // # Used Current
+      vespeneUsed.Army = +vespeneData.army.usedCurrent;
+      vespeneUsed.Economy = +vespeneData.economy.usedCurrent;
+      vespeneUsed.Technology = +vespeneData.technology.usedCurrent;
+      // # Lost
+      vespeneLost.FriendlyFire = +vespeneData.army.friendlyFire;
+      vespeneLost.Killed = +vespeneData.economy.killed;
+      vespeneLost.Lost = +vespeneData.technology.lost;
+    });
 
-  donut_chart("#chart_m_0", tempData_);
-  donut_chart("#chart_v_0", tempData1_);
+    playerArrayMinerals.push(mineralsUsed); playerArrayMinerals.push(mineralsLost);
+    playerArrayVespene.push(vespeneUsed); playerArrayVespene.push(vespeneLost);
 
+    for (var m = 0; m < playerArrayMinerals.length; m++) {
+      donut_chart("#chart_m_" + m, playerArrayMinerals[m], 0);
+    }
+
+    for (var v = 0; v < playerArrayVespene.length; v++) {
+      donut_chart("#chart_v_" + v, playerArrayVespene[v], 1);
+    }
+  }
 
 })(window.d3);
 
@@ -46,10 +66,9 @@ function initCheck(tempData_) {
 }
 
 // Function to create a donut chart
-function donut_chart(divId, tempData_) {
+function donut_chart(divId, tempData_, flip) {
   if (initCheck(tempData_)) return;
-
-  var color = d3.scale.category20();
+  var color = switchColors(flip);
 
   var svg = d3.select(divId)
     .append('svg')
@@ -83,7 +102,7 @@ function donut_chart(divId, tempData_) {
   var dataset = [];
   for (var k in tempData_) {
     var keyArray = k.split(/(?=[A-Z])/);
-    var keyName = keyArray[keyArray.length - 1];
+    var keyName = keyArray.join(" ");
     var obj = { key: keyName, value: tempData_[k], enabled: true };
     dataset.push(obj);
   }
