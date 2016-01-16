@@ -137,7 +137,8 @@ For this parser we used code and documentation from the following projects:
 | 8 | NNet.Replay.Tracker.SUnitPositionsEvent |
 | 9 | NNet.Replay.Tracker.SPlayerSetupEvent |
 
-#### NNet.Replay.Tracker.SPlayerStatsEvent
+
+#### 0. NNet.Replay.Tracker.SPlayerStatsEvent
 Player Stats events are generated for all players that were in the game, even if they've since
 left, every 10 seconds.  
 This event contains the following keys:
@@ -186,6 +187,44 @@ This event contains the following keys:
     * *m_scoreValueVespeneUsedInProgressEconomy*
     * *m_scoreValueVespeneUsedInProgressTechnology*
     * *m_scoreValueWorkersActiveCount*
+
+#### 1. NNet.Replay.Tracker.SUnitBornEvent
+Generated when a unit is created in a finished state in the game. Examples include the Marine,
+Zergling, and Zealot (when trained from a gateway). Units that enter the game unfinished (all
+buildings, warped in units) generate a **UnitInitEvent** instead.
+The following data is provided by the event:
+
+ * *_bits*
+ * *_event*
+ * *_eventid*
+ * *_gameloop*
+ * *m_controlPlayerId*: The id of the player that controls this unit.
+ * *m_unitTagIndex*: The index portion of the unit id.
+ * *m_unitTagRecycle*: The recycle portion of the unit id.
+ * *m_unitTypeName*: The unit type name of the unit being born.
+ * *m_upkeepPlayerId*: The id of the player that pays upkeep for this unit.
+ * *m_x*: The x coordinate of the center of the dying unit's footprint.
+ * *m_y*: The y coordinate of the center of the dying unit's footprint.
+
+#### 2. NNet.Replay.Tracker.SUnitDiedEvent
+Generated when a unit dies or is removed from the game for any reason. Reasons include morphing, merging, and getting killed.
+
+ * *_bits*
+ * *_event*
+ * *_eventid*
+ * *_gameloop*
+ * *m_killerPlayerId*: The id of the player that killed this unit.
+ * *m_killerUnitTagIndex*: The index portion of the killing unit's id.
+ * *m_killerUnitTagRecycle*: The recycle portion of the killing unit's id.
+ * *m_unitTagIndex*: The index portion of the unit id.
+ * *m_unitTagRecycle*: The recycle portion of the unit id.
+ * *m_x*: The x coordinate of the center of the dying unit's footprint.
+ * *m_y*: The y coordinate of the center of the dying unit's footprint.
+
+#### 3. NNet.Replay.Tracker.SUnitOwnerChangeEvent
+Generated when either ownership or control of a unit is changed. Neural Parasite is an example of an action that would generate this event.
+
+
 
 # Sc2ReplayParser
 This is our parser, which uses our Sc2ReplayReader to retrieve the previously documented data structures and parses them to JSON format. Each replay gets its own file which contains the variables *details* and *economy*.
