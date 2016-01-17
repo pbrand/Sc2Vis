@@ -1,3 +1,4 @@
+import copy
 import json
 import string
 
@@ -18,8 +19,17 @@ class Sc2ReplayParser:
         # Parse data
         parsed_details = {}
         parsed_economy_data = {}
+        parsed_worker_data = {}
+        parsed_army_data = {}
+        for userId in self.__playerIdToUserId.values():
+            parsed_economy_data[userId] = []
+            parsed_worker_data[userId] = {}
+            parsed_army_data[userId] = {}
+            
         self.__parse_replay_details(parsed_details)
         self.__parse_economy_data(parsed_economy_data)
+        self.__parse_units(parsed_worker_data, 'worker')
+        self.__parse_units(parsed_army_data, 'army')
         
         # Write data to file
         print 'Parsing to file: '+self.__output_path+replay_name+'.js'
@@ -28,6 +38,10 @@ class Sc2ReplayParser:
             json.dump(parsed_details, outfile)
             outfile.write(',\neconomy = ')
             json.dump(parsed_economy_data, outfile)
+            outfile.write(',\nworkers = ')
+            json.dump(parsed_worker_data, outfile)
+            outfile.write(',\narmy = ')
+            json.dump(parsed_army_data, outfile)
         outfile.close()
     
     def __collect_data(self):
@@ -37,13 +51,32 @@ class Sc2ReplayParser:
         self.__tracker_events = self.__reader.get_replay_tracker_events()
         # set initial data:
         self.__economy_data = []
+        self.__player_data = {}
+        self.__unit_data = []
         self.__playerIdToUserId = {} # PlayerId -> UserId mapping
+        ownerChanged = '' # Used for finding ownerchanged keys. Not found so far.
         for event in self.__tracker_events:
             if event['_event'] == 'NNet.Replay.Tracker.SPlayerSetupEvent':
                 self.__playerIdToUserId[event['m_playerId']] = event['m_userId']
-            if event['_event'] == 'NNet.Replay.Tracker.SPlayerStatsEvent':
+                player = self.__replay_details['m_playerList'][event['m_userId']]
+                self.__player_data[event['m_playerId']] = {'userId': event['m_userId'],\
+                                                           'race': player['m_race'],\
+                                                           'name': player['m_name']}
+            elif event['_event'] == 'NNet.Replay.Tracker.SPlayerStatsEvent':
                 self.__economy_data.append(event)
-        
+            elif event['_eventid'] > 0 and event['_eventid'] < 9:
+                self.__unit_data.append(event)
+            if event['_eventid'] == 3:
+                k = event.keys()
+                k.sort()
+                ownerChanged = str(k)
+        if ownerChanged:
+            t = open(self.__output_path+'ownerChangedEvent.txt', 'w') # For testing eventid == 3
+            t.write(ownerChanged)
+            t.close()
+        # Load all Unit Types from data file.
+        with open(string.split(self.__replay_path, 'Data/')[0]+'/sc2parser/units.json') as data:    
+            self.__units = json.load(data)
 
     def __parse_replay_details(self, output_list):
         output_list['elapsedGameLoops'] = self.__replay_header['m_elapsedGameLoops']
@@ -75,9 +108,6 @@ class Sc2ReplayParser:
         output_list['playerList'] = parsed_player_list
     
     def __parse_economy_data(self, output_list):
-        for userId in self.__playerIdToUserId.values():
-            output_list[userId] = []
-            
         for event in self.__economy_data:
             economy_entry = {'food': {},
                                 'minerals': {'army': {}, 'economy': {}, 'technology': {}},
@@ -95,7 +125,7 @@ class Sc2ReplayParser:
             if 'Food' in stat:
                 stat_type = string.split(stat, 'Food')[1]
                 stat_type = first_char_to_lower(stat_type)
-                economy_entry['food'][stat_type] = stats[stat]
+                economy_entry['food'][stat_type] = stats[stat] / 4096 # s2protocol: (divide by 4096 for integer values)
             elif 'Minerals' in stat:
                 self.__parse_resource_domain_stats('Minerals', economy_entry, stat, stats[stat])
             elif 'Vespene' in stat:
@@ -123,6 +153,32 @@ class Sc2ReplayParser:
             entry[resource.lower()][domain.lower()][stat_type] = value
         else:
             entry[resource.lower()][stat_type] = value
+    
+    def __parse_units(self, output_list, unitType):
+        # NO PASS BY REFERENCE HERE!!! We want to modify this variable without changing our output_list
+        previous_loop = copy.deepcopy(output_list)
+        for event in self.__unit_data:
+            if event['_eventid'] == 1 or event['_eventid'] == 6:
+                if event['m_controlPlayerId'] > 0: # controlPlayerId 0 means nobody controls?? (minerals etc.)
+                    player = self.__player_data[event['m_controlPlayerId']]
+                    if event['m_unitTypeName'] in self.__units[player['race']][unitType]:
+                        unitId = (event['m_unitTagIndex'] << 18) | event['m_unitTagRecycle']
+                        if len(previous_loop[player['userId']]) > 0:
+                            output_list[player['userId']][event['_gameloop']] = copy.deepcopy(previous_loop[player['userId']])
+                        else:
+                            output_list[player['userId']][event['_gameloop']] = {}
+                        current_loop = output_list[player['userId']][event['_gameloop']]
+                        unit_data = {'unitTypeName': event['m_unitTypeName'],\
+                                     'x': event['m_x'],\
+                                     'y': event['m_y']}
+                        current_loop[unitId] = unit_data
+                        previous_loop[player['userId']] = copy.deepcopy(current_loop)
+            if event['_eventid'] == 2:
+                killed_unitId = (event['m_unitTagIndex'] << 18) | event['m_unitTagRecycle']
+                for user_id in previous_loop:
+                    # if pop doesn't return None, userId has to be updated, because his unit was killed
+                    if previous_loop[user_id].pop(killed_unitId, None):
+                        output_list[user_id][event['_gameloop']] = copy.deepcopy(previous_loop[user_id]) 
 
 # Function changes the first character of a string to lower case.
 first_char_to_lower = lambda s: s[:1].lower() + s[1:] if s else ''
