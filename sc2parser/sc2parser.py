@@ -162,7 +162,7 @@ class Sc2ReplayParser:
                 if event['m_controlPlayerId'] > 0: # controlPlayerId 0 means nobody controls?? (minerals etc.)
                     player = self.__player_data[event['m_controlPlayerId']]
                     if event['m_unitTypeName'] in self.__units[player['race']][unitType]:
-                        unitId = (event['m_unitTagIndex'] << 18) | event['m_unitTagRecycle']
+                        unit_id = (event['m_unitTagIndex'] << 18) | event['m_unitTagRecycle']
                         if len(previous_loop[player['userId']]) > 0:
                             output_list[player['userId']][event['_gameloop']] = copy.deepcopy(previous_loop[player['userId']])
                         else:
@@ -170,15 +170,25 @@ class Sc2ReplayParser:
                         current_loop = output_list[player['userId']][event['_gameloop']]
                         unit_data = {'unitTypeName': event['m_unitTypeName'],\
                                      'x': event['m_x'],\
-                                     'y': event['m_y']}
-                        current_loop[unitId] = unit_data
+                                     'y': event['m_y'],\
+                                     'isDone': True}
+                        if event['_eventid'] == 6:
+                            unit_data['isDone'] = False
+                        current_loop[unit_id] = unit_data
                         previous_loop[player['userId']] = copy.deepcopy(current_loop)
-            if event['_eventid'] == 2:
+            elif event['_eventid'] == 2:
                 killed_unitId = (event['m_unitTagIndex'] << 18) | event['m_unitTagRecycle']
                 for user_id in previous_loop:
                     # if pop doesn't return None, userId has to be updated, because his unit was killed
                     if previous_loop[user_id].pop(killed_unitId, None):
-                        output_list[user_id][event['_gameloop']] = copy.deepcopy(previous_loop[user_id]) 
+                        output_list[user_id][event['_gameloop']] = copy.deepcopy(previous_loop[user_id])
+            elif event['_eventid'] == 7:
+                unit_id = (event['m_unitTagIndex'] << 18) | event['m_unitTagRecycle']
+                for user_id in previous_loop:
+                    # UnitDone event so set isDone to True for that unit
+                    if unit_id in previous_loop[user_id].keys():
+                        previous_loop[user_id][unit_id]['isDone'] = True
+                        output_list[user_id][event['_gameloop']] = copy.deepcopy(previous_loop[user_id])
 
 # Function changes the first character of a string to lower case.
 first_char_to_lower = lambda s: s[:1].lower() + s[1:] if s else ''
