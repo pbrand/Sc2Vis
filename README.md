@@ -315,3 +315,16 @@ economy
                       +--- usedCurrent
                       +--- usedInProgress
 ```
+## Units
+Unit information is stored per *UnitType* where the *UnitType*s are: *worker*, *army*, *structures*. Each *UnitType* has its own variable.
+The parser stores all information per *userId*, then next level stores per *gameloop* and finally the units are stored per *unitId*. The hierarchy of the data is as follows:
+```
+worker/army/structures
+   +---#userId // Contains a list with entries of the following structure:
+        +--- #gameloop
+                +--- #unitID
+                       +--- unitTypeName // Name of the type of unit
+                       +--- x // X coordinate of the center of the unit (might have to be multiplied by for, since s2protocol does this)
+                       +--- y // Y coordinate of the center of the unit (might have to be multiplied by for, since s2protocol does this)
+                       +--- isDone // Is true by default, except if this entry was made under the UserInitEvent, then it's false. It is set to true after UserDoneEvent.
+```
