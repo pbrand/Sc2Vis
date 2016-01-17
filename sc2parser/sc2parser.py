@@ -21,15 +21,18 @@ class Sc2ReplayParser:
         parsed_economy_data = {}
         parsed_worker_data = {}
         parsed_army_data = {}
+        parsed_structure_data = {}
         for userId in self.__playerIdToUserId.values():
             parsed_economy_data[userId] = []
             parsed_worker_data[userId] = {}
             parsed_army_data[userId] = {}
+            parsed_structure_data[userId] = {}
             
         self.__parse_replay_details(parsed_details)
         self.__parse_economy_data(parsed_economy_data)
         self.__parse_units(parsed_worker_data, 'worker')
         self.__parse_units(parsed_army_data, 'army')
+        self.__parse_units(parsed_structure_data, 'structures')
         
         # Write data to file
         print 'Parsing to file: '+self.__output_path+replay_name+'.js'
@@ -42,6 +45,8 @@ class Sc2ReplayParser:
             json.dump(parsed_worker_data, outfile)
             outfile.write(',\narmy = ')
             json.dump(parsed_army_data, outfile)
+            outfile.write(',\nstructures = ')
+            json.dump(parsed_structure_data, outfile)
         outfile.close()
     
     def __collect_data(self):
