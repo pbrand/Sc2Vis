@@ -171,7 +171,6 @@ function stackedBarChart(divId, dataset, flip) {
   titel.append('text')
     // .attr('transform', 'translate(-100, 20)')
     .text(function(d, i) {
-      console.log(d);
       return d[0].key;
     });
 }

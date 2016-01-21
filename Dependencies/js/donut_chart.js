@@ -113,7 +113,8 @@ function donut_chart(divId, tempData_, flip) {
     .append('path')
     .attr('d', arc)
     .attr('fill', function(d, i) {
-      return color(d.data.key); 
+      if (d.value > 0)
+        return color(d.data.key); 
     })
     .each(function(d) { this._current = d; });
 
