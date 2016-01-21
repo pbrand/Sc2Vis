@@ -137,7 +137,8 @@ For this parser we used code and documentation from the following projects:
 | 8 | NNet.Replay.Tracker.SUnitPositionsEvent |
 | 9 | NNet.Replay.Tracker.SPlayerSetupEvent |
 
-#### NNet.Replay.Tracker.SPlayerStatsEvent
+
+#### 0. NNet.Replay.Tracker.SPlayerStatsEvent
 Player Stats events are generated for all players that were in the game, even if they've since
 left, every 10 seconds.  
 This event contains the following keys:
@@ -186,3 +187,144 @@ This event contains the following keys:
     * *m_scoreValueVespeneUsedInProgressEconomy*
     * *m_scoreValueVespeneUsedInProgressTechnology*
     * *m_scoreValueWorkersActiveCount*
+
+#### 1. NNet.Replay.Tracker.SUnitBornEvent
+Generated when a unit is created in a finished state in the game. Examples include the Marine,
+Zergling, and Zealot (when trained from a gateway). Units that enter the game unfinished (all
+buildings, warped in units) generate a **UnitInitEvent** instead.
+The following data is provided by the event:
+
+ * *_bits*
+ * *_event*
+ * *_eventid*
+ * *_gameloop*
+ * *m_controlPlayerId*: The id of the player that controls this unit.
+ * *m_unitTagIndex*: The index portion of the unit id.
+ * *m_unitTagRecycle*: The recycle portion of the unit id.
+ * *m_unitTypeName*: The unit type name of the unit being born.
+ * *m_upkeepPlayerId*: The id of the player that pays upkeep for this unit.
+ * *m_x*: The x coordinate of the center of the dying unit's footprint.
+ * *m_y*: The y coordinate of the center of the dying unit's footprint.
+
+#### 2. NNet.Replay.Tracker.SUnitDiedEvent
+Generated when a unit dies or is removed from the game for any reason. Reasons include morphing, merging, and getting killed.
+
+ * *_bits*
+ * *_event*
+ * *_eventid*
+ * *_gameloop*
+ * *m_killerPlayerId*: The id of the player that killed this unit.
+ * *m_killerUnitTagIndex*: The index portion of the killing unit's id.
+ * *m_killerUnitTagRecycle*: The recycle portion of the killing unit's id.
+ * *m_unitTagIndex*: The index portion of the unit id.
+ * *m_unitTagRecycle*: The recycle portion of the unit id.
+ * *m_x*: The x coordinate of the center of the dying unit's footprint.
+ * *m_y*: The y coordinate of the center of the dying unit's footprint.
+
+#### 3. NNet.Replay.Tracker.SUnitOwnerChangeEvent
+Generated when either ownership or control of a unit is changed. Neural Parasite is an example of an action that would generate this event.
+
+
+
+# Sc2ReplayParser
+This is our parser, which uses our Sc2ReplayReader to retrieve the previously documented data structures and parses them to JSON format. Each replay gets its own file which contains the variables *details* and *economy*.
+
+## Details
+This variable has the following structure:
+```
+data
+ +--- baseBuild
+ +--- gameTime //In seconds
+ +--- elapsedGameLoops
+ +--- gameSpeed
+ +--- mapName
+ +--- playerList //which contains a dictionary per player containing:
+ |       +--- control
+ |       +--- race
+ |       +--- name
+ |       +--- color
+ |       |   +--- r
+ |       |   +--- g
+ |       |   +--- b
+ |       |   +--- a
+ |       +--- region
+ |       +--- handicap
+ |       +--- teamId
+ |       +--- observe
+ |       +--- result
+ +--- gameStart *As a UTC/GMT Timestamp*
+ +--- isBlizzardMap
+```
+
+## Economy
+The parser stores all information per *userId*. The hierarchy of the data is as follows:
+```
+economy
+   +---#userId // Contains a list with entries of the following structure:
+        +--- gameloop
+        +--- workersActive
+        +--- food
+        |      +--- made
+        |      +--- used
+        +--- minerals
+        |      +--- collectionRate
+        |      +--- current
+        |      +--- army
+        |      |      +--- friendlyFire
+        |      |      +--- killed
+        |      |      +--- lost
+        |      |      +--- used
+        |      |      +--- usedCurrent
+        |      |      +--- usedInProgress
+        |      +--- economy
+        |      |      +--- friendlyFire
+        |      |      +--- killed
+        |      |      +--- lost
+        |      |      +--- used
+        |      |      +--- usedCurrent
+        |      |      +--- usedInProgress
+        |      +--- technology
+        |             +--- friendlyFire
+        |             +--- killed
+        |             +--- lost
+        |             +--- used
+        |             +--- usedCurrent
+        |             +--- usedInProgress
+        +--- vespene
+               +--- collectionRate
+               +--- current
+               +--- army
+               |      +--- friendlyFire
+               |      +--- killed
+               |      +--- lost
+               |      +--- used
+               |      +--- usedCurrent
+               |      +--- usedInProgress
+               +--- economy
+               |      +--- friendlyFire
+               |      +--- killed
+               |      +--- lost
+               |      +--- used
+               |      +--- usedCurrent
+               |      +--- usedInProgress
+               +--- technology
+                      +--- friendlyFire
+                      +--- killed
+                      +--- lost
+                      +--- used
+                      +--- usedCurrent
+                      +--- usedInProgress
+```
+## Units
+Unit information is stored per *UnitType* where the *UnitType*s are: *worker*, *army*, *structures*. Each *UnitType* has its own variable.
+The parser stores all information per *userId*, then next level stores per *gameloop* and finally the units are stored per *unitId*. The hierarchy of the data is as follows:
+```
+worker/army/structures
+   +---#userId // Contains a list with entries of the following structure:
+        +--- #gameloop
+                +--- #unitID
+                       +--- unitTypeName // Name of the type of unit
+                       +--- x // X coordinate of the center of the unit (might have to be multiplied by for, since s2protocol does this)
+                       +--- y // Y coordinate of the center of the unit (might have to be multiplied by for, since s2protocol does this)
+                       +--- isDone // Is true by default, except if this entry was made under the UserInitEvent, then it's false. It is set to true after UserDoneEvent.
+```
