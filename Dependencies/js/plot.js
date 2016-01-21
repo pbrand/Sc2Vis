@@ -1,6 +1,6 @@
-var viewHeight = 800;
-var viewWidth = 800;
-var linePlotMargin = {top: 20, right: 20, bottom: viewHeight - ( (3/4)*viewHeight), left: 40};
+var viewHeight = 352;
+var viewWidth = 352;
+var linePlotMargin = {top: 20, left: 100, right: 20, bottom: viewHeight - ( (3/4)*viewHeight), left: 40};
 var selectionPlotMargin = {top: viewHeight - ( (1/6)*viewHeight), right: 20, bottom: 20, left: 40};
 var lpWidth = viewWidth - linePlotMargin.left - linePlotMargin.right;
 var lpHeight = viewHeight - linePlotMargin.top - linePlotMargin.bottom;
@@ -142,7 +142,7 @@ function drawScatterplot(resetDomain) {
       .attr("data-legend", player1_Name)
       .attr("clip-path", "url(#clip)")
       .style("stroke-width", 1)
-      .style("stroke", "green")
+      .style("stroke", saturateColor(player1_Color,100))
       .style("fill", "none");
 
   focus.append("path")
@@ -151,7 +151,7 @@ function drawScatterplot(resetDomain) {
     .attr("data-legend", player2_Name)
     .attr("clip-path", "url(#clip)")
       .style("stroke-width", 1)
-      .style("stroke", "red")
+      .style("stroke", saturateColor(player2_Color,100))
       .style("fill", "none");
 
       
@@ -215,7 +215,7 @@ function drawScatterplot(resetDomain) {
       .attr("x", lpWidth - 18)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "green");
+      .style("fill", saturateColor(player1_Color,100));
 
   legend.append("text")
       .attr("x", lpWidth - 22)
@@ -229,7 +229,7 @@ function drawScatterplot(resetDomain) {
       .attr("y", 30)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "red");
+      .style("fill", saturateColor(player2_Color,100));
       
   legend.append("text")
       .attr("x", lpWidth - 22)
