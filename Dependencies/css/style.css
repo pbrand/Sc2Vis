@@ -21,12 +21,6 @@ body {
   padding-right: 15px;
 }
 
-.brush .extent {
-  stroke: #fff;
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
-}
-
 /* HTML5 display definitions
    ========================================================================== */
 /**
@@ -339,6 +333,21 @@ td, th {
         margin: 0; 
       }
 
+      .brush .extent {
+        stroke: #fff;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+      }
+
+      .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+      .container {
+        width: 352px;
+        height: 352px;
+      }
       #mineral_donuts, #vespene_donuts {
         position: relative;
       }
