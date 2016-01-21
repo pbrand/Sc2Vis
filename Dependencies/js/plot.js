@@ -1,20 +1,20 @@
-var viewHeight = 400;
-var viewWidth = 400;
+var viewHeight = 800;
+var viewWidth = 800;
 var linePlotMargin = {top: 20, right: 20, bottom: viewHeight - ( (3/4)*viewHeight), left: 40};
 var selectionPlotMargin = {top: viewHeight - ( (1/6)*viewHeight), right: 20, bottom: 20, left: 40};
 var lpWidth = viewWidth - linePlotMargin.left - linePlotMargin.right;
 var lpHeight = viewHeight - linePlotMargin.top - linePlotMargin.bottom;
 var lpHeight2 = viewHeight - selectionPlotMargin.top - selectionPlotMargin.bottom;
 
+
 var data1 = []; var data2 = [];var allData =[];
 var resource = 'minerals'; var stat = 'CollectionRate';
 prepareData(resource, stat);
+
 var xExtent = d3.extent(allData, function(d) { return d['gameloop'] });
 var yExtent = d3.extent(allData, function(d) { return d[stat] }); 
 
-var timeFrame = [0,120];
-
-var x = d3.scale.linear()
+var x = d3.time.scale()
     .domain(xExtent).nice()
     .range([0, lpWidth]);
 
@@ -33,13 +33,13 @@ var y2 = d3.scale.linear()
 function prepareData(resource, stat) {
   for(var e in economy[0]) {
     var d = {};
-    d['gameloop'] = economy[0][e].gameloop / 16.0;
+    d['gameloop'] = economy[0][e].gameloop / 16.0 * 1000;
     d[stat] = economy[0][e][resource][stat];
     data1.push(d);
   }
   for(var e in economy[1]) {
     var d = {};
-    d['gameloop'] = economy[1][e].gameloop / 16.0;
+    d['gameloop'] = economy[1][e].gameloop / 16.0 * 1000;
     d[stat] = economy[1][e][resource][stat];
     data2.push(d);
   }
@@ -48,11 +48,13 @@ function prepareData(resource, stat) {
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom");
+    .orient("bottom")
+    //.ticks(d3.time.minute, 1)
+    .tickFormat(d3.time.format('%M:%S'));
     
 var xAxis2 = d3.svg.axis()
      .scale(x2)
-     .orient("bottom")
+     .orient("bottom");
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -71,9 +73,9 @@ var focus = scatterPlotSvg.append("g")
     .attr("player", "focus")
     .attr("transform", "translate(" + linePlotMargin.left + "," + linePlotMargin.top + ")");
 
-var context = scatterPlotSvg.append("g")
+/*var context = scatterPlotSvg.append("g")
     .attr("player", "context")
-    .attr("transform", "translate(" + selectionPlotMargin.left + "," + selectionPlotMargin.top + ")");
+    .attr("transform", "translate(" + selectionPlotMargin.left + "," + selectionPlotMargin.top + ")");*/
 
 var defs = scatterPlotSvg.append( "defs" ).append("clipPath")
     .attr("id", "clip")
@@ -104,9 +106,9 @@ function drawScatterplot(resetDomain) {
   focus.selectAll(".line").remove();
   focus.selectAll(".line2").remove();
   
-  context.selectAll("g").remove();
+  /*context.selectAll("g").remove();
   context.selectAll(".line").remove();
-  context.selectAll(".line2").remove();
+  context.selectAll(".line2").remove();*/
 
   focus.append("g")
       .attr("id", "xAxis")
@@ -119,7 +121,7 @@ function drawScatterplot(resetDomain) {
       .attr("x", lpWidth)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("Time (s)");
+      .text("Time (mm:ss)");
 
   focus.append("g")
       .attr("id", "yAxis")
@@ -137,7 +139,7 @@ function drawScatterplot(resetDomain) {
   focus.append("path")
       .attr("class", "line")
       .attr("d", line(data1))
-      .attr("data-legend", "radiant")
+      .attr("data-legend", player1_Name)
       .attr("clip-path", "url(#clip)")
       .style("stroke-width", 1)
       .style("stroke", "green")
@@ -146,14 +148,14 @@ function drawScatterplot(resetDomain) {
   focus.append("path")
     .attr("class", "line2")
     .attr("d", line(data2))
-    .attr("data-legend", "dire")
+    .attr("data-legend", player2_Name)
     .attr("clip-path", "url(#clip)")
       .style("stroke-width", 1)
       .style("stroke", "red")
       .style("fill", "none");
 
       
-  context.append("g")
+  /*context.append("g")
       .attr("id", "xAxis")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + lpHeight2 + ")")
@@ -198,13 +200,13 @@ function drawScatterplot(resetDomain) {
       .style("stroke", "red")
       .style("fill", "none");
       
-      
-      context.append("g")
+      */
+      focus.append("g")
       .attr("class", "x brush")
       .call(brush)
     .selectAll("rect")
       .attr("y", -6)
-      .attr("height", lpHeight2 + 7);
+      .attr("height", lpHeight + 7);
       
   var legend = focus.append("g")
       .attr("class", "legend");
@@ -220,7 +222,7 @@ function drawScatterplot(resetDomain) {
       .attr("y", 6)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text("Radiant");
+      .text(player1_Name);
       
   legend.append("rect")
       .attr("x", lpWidth - 18)
@@ -234,13 +236,13 @@ function drawScatterplot(resetDomain) {
       .attr("y", 36)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text("Dire");
+      .text(player2_Name);
 }
 
 function drawBrush() {
-  var offset = 10;
+  //var offset = 10;
   // define our brush extent to be begin and end of the year
-  brush.extent([brush.extent()[0] + offset, brush.extent()[1] + offset]);
+  //brush.extent([brush.extent()[0] + offset, brush.extent()[1] + offset]);
 
   // now draw the brush to match our extent
   // use transition to slow it down so we can see what is happening
@@ -249,7 +251,7 @@ function drawBrush() {
 
   // now fire the brushstart, brushmove, and brushend events
   // remove transition so just d3.select(".brush") to just draw
-  brush.event(d3.select(".brush"));
+  /*brush.event(d3.select(".brush"));
   if((brush.extent()[1] + offset) > x2.domain()[1]){
     clearInterval(stop_running);
     running = false;
@@ -258,7 +260,7 @@ function drawBrush() {
     brush.extent([0, 120]);
     brush(d3.select(".brush"));
     brush.event(d3.select(".brush"));
-  }
+  }*/
 }
 
 var running = false;
@@ -279,9 +281,9 @@ if(!running){
 brushed();
 function brushed() {
   x.domain(brush.empty() ? x2.domain() : brush.extent());
-  focus.select(".line").attr("d", line(data1));
+  /*focus.select(".line").attr("d", line(data1));
   focus.select(".line2").attr("d", line(data2));
-  focus.select(".x.axis").call(xAxis);
+  focus.select(".x.axis").call(xAxis);*/
   timeFrame = brush.extent();
 
   // Redraw
@@ -314,8 +316,8 @@ function resizeScatterplot() {
     .attr("height", viewHeight);
   focus
     .attr("transform", "translate(" + linePlotMargin.left + "," + linePlotMargin.top + ")");
-  context
-    .attr("transform", "translate(" + selectionPlotMargin.left + "," + selectionPlotMargin.top + ")");
+  /*context
+    .attr("transform", "translate(" + selectionPlotMargin.left + "," + selectionPlotMargin.top + ")");*/
   brush
     .extent(timeFrame);
 

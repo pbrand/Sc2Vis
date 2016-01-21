@@ -29,3 +29,6 @@ var player1_Name = details.playerList[0].name;
 var player1_Race = details.playerList[0].race;
 var player2_Name = details.playerList[1].name;
 var player2_Race = details.playerList[1].race;
+
+// Time frame (edited by brush )
+var timeFrame = [0,0];
