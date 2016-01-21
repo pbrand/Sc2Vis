@@ -384,3 +384,9 @@ td, th {
         font-size: 20px;                                              /* NEW */
         text-align: center;                                           /* NEW */
       }    
+
+      #map {
+        display: inline-block;
+        width: 352px;
+        height: 352px;
+      }

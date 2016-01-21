@@ -1,31 +1,32 @@
 // 176 * 184
-var width = 176 * 4;
-var endTime = 10000;
-var svg;
+var widthFactor = 2;
+var width = 176 * widthFactor;
+var svgMapImg;
 
-if (svg === undefined)
-  mapImage();
 initMap();
 function initMap() {
-  svg.selectAll("circle").remove(); svg.selectAll("rect").remove();
+  if (svgMapImg === undefined)
+    mapImage();
+  // Remove all circles and rects
+  svgMapImg.selectAll("circle").remove(); svgMapImg.selectAll("rect").remove();
 
   console.log("After remove");
   for (var i = 0; i < 2; i++) {
-    var data_structures = getLastData(structures[i], endTime);
-    var circles = svg.selectAll("circle").data(data_structures);
+    var data_structures = getLastData(structures[i]);
+    var circles = svgMapImg.selectAll("circle").data(data_structures);
     drawStructures(circles, data_structures, i);
 
-    var data_armies = getLastData(army[i], endTime);
-    var rects = svg.selectAll("rect").data(data_armies);
+    var data_armies = getLastData(army[i]);
+    var rects = svgMapImg.selectAll("rect").data(data_armies);
     drawArmies(rects, data_armies, i);
   }
 }
 
-function getLastData(data, endTime) {
+function getLastData(data) {
   var ret;
   for (var k in data) {
     var gameloopTime = k / 16.0;
-    if (gameloopTime <= endTime) 
+    if (gameloopTime <= (timeFrame[1] / 1000)) 
       ret = data[k];
     else
       break;
@@ -40,12 +41,12 @@ function getLastData(data, endTime) {
 }
 
 function mapImage() {
-  svg = d3.select("#map_img")
+  svgMapImg = d3.select("#map")
     .append("svg")
         .attr("width", width)
         .attr("height", width);
 
-  svg.append("svg:image")
+  svgMapImg.append("svg:image")
    .attr('width', width)
    .attr('height', width)
    .attr("xlink:href","../Dependencies/imgs/maps/" + mapName + ".jpg")
@@ -63,8 +64,8 @@ function drawStructures(svgElement, data, i) {
   svgElement
     .enter().append("rect")
       .style("fill", saturateColor(details.playerList[i].color, saturation))
-      .attr("x", function(d) { return (d.x * 4); })
-      .attr("y", function(d) { return width - (d.y * 4); })
+      .attr("x", function(d) { return (d.x * widthFactor); })
+      .attr("y", function(d) { return width - (d.y * widthFactor); })
       .attr("width", function(d) { return structureSize(d.unitTypeName); })
       .attr("height", function(d) { return structureSize(d.unitTypeName); })
       .attr("unitName", function(d) { return d.unitTypeName; });
@@ -79,8 +80,8 @@ function drawArmies(svgElement, data, i) {
   svgElement
     .enter().append("circle")
       .style("fill", saturateColor(details.playerList[i].color, saturation))
-      .attr("cx", function(d) { return (d.x * 4); })
-      .attr("cy", function(d) { return width - (d.y * 4); })
+      .attr("cx", function(d) { return (d.x * widthFactor); })
+      .attr("cy", function(d) { return width - (d.y * widthFactor); })
       .attr("r", function(d) { return armySize(d.unitTypeName); })
       .attr("unitName", function(d) { return d.unitTypeName; });
 }

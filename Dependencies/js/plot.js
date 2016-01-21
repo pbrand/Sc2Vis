@@ -285,6 +285,7 @@ function brushed() {
   focus.select(".line2").attr("d", line(data2));
   focus.select(".x.axis").call(xAxis);*/
   timeFrame = brush.extent();
+  initMap();
 
   // Redraw
   if (typeof redraw !== 'undefined') {

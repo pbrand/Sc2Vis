@@ -1,6 +1,6 @@
-function withinTimeFrame(gameloop, startTime, endTime) {
+function withinTimeFrame(gameloop, timeFrame) {
   var gl = gameloop / 16.0;
-  return (gl >= startTime && gl <= endTime);
+  return (gl >= (timeFrame[0] / 1000) && gl <= (timeFrame[1] / 1000));
 }
 
 function switchColors(flip) {
