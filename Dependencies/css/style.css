@@ -21,6 +21,12 @@ body {
   padding-right: 15px;
 }
 
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
 /* HTML5 display definitions
    ========================================================================== */
 /**
