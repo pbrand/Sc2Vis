@@ -13,4 +13,5 @@ var player2_Race = details.playerList[1].race;
 var player2_Color = { r: details.playerList[1].color.r, g: details.playerList[1].color.g, b: details.playerList[1].color.b };
 
 // Time frame (edited by brush )
-var timeFrame = [0,0];
+var timeFrame = [0, 0];
+// var xExtent = [];

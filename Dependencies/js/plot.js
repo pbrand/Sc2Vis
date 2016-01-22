@@ -65,7 +65,7 @@ var brush = d3.svg.brush()
     .extent(timeFrame)
     .on("brush", brushed);
 
-var scatterPlotSvg = d3.select("#scatterplot").select("svg")
+var scatterPlotSvg = d3.select("#scatterplot").append("svg")
     .attr("width", viewWidth)
     .attr("height", viewHeight);
 
@@ -286,6 +286,7 @@ function brushed() {
   focus.select(".x.axis").call(xAxis);*/
   timeFrame = brush.extent();
   initMap();
+  generateDonutCharts();
 
   // Redraw
   if (typeof redraw !== 'undefined') {

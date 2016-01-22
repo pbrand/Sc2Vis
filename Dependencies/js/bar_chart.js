@@ -10,12 +10,12 @@ var color = d3.scale.category10();
 function foodInformation() {
   var foodData_0 = {}, foodData_1 = {};
   economy[0].forEach(function(d, i) {
-      if (!withinTimeFrame(d.gameloop, 1200, 1400)) return;
+      if (!withinTimeFrame(d.gameloop)) return;
       foodData_0.foodUsed = +d.food.used;
       foodData_0.foodMade = +d.food.made;
   });
   economy[1].forEach(function(d, i) {
-      if (!withinTimeFrame(d.gameloop, 1200, 1400)) return;
+      if (!withinTimeFrame(d.gameloop)) return;
       foodData_1.foodUsed = +d.food.used;
       foodData_1.foodMade = +d.food.made;
   });
@@ -28,16 +28,16 @@ function playerVersus() {
   for (var x = 0; x <= 1; x++) {
     var currentData = { textVal: "Current" }, rateData = { textVal: "Collection Rate" }, forcesData = { textVal: "Used Active Forces" };
     economy[0].forEach(function(d, i) {
-        if (!withinTimeFrame(d.gameloop, 1200, 1400)) return;
-        currentData.value_0 = (x == 0 ? +d.minerals.Current : +d.vespene.Current);
-        rateData.value_0 = (x == 0 ? +d.minerals.CollectionRate : +d.vespene.CollectionRate);
-        forcesData.value_0 = (x == 0 ? +d.minerals.UsedActiveForces : +d.vespene.UsedActiveForces);
+      if (!withinTimeFrame(d.gameloop)) return;
+      currentData.value_0 = (x == 0 ? +d.minerals.Current : +d.vespene.Current);
+      rateData.value_0 = (x == 0 ? +d.minerals.CollectionRate : +d.vespene.CollectionRate);
+      forcesData.value_0 = (x == 0 ? +d.minerals.UsedActiveForces : +d.vespene.UsedActiveForces);
     });
     economy[1].forEach(function(d, i) {
-        if (!withinTimeFrame(d.gameloop, 1200, 1400)) return;
-        currentData.value_1 = (x == 0 ? +d.minerals.Current : +d.vespene.Current);
-        rateData.value_1 = (x == 0 ? +d.minerals.CollectionRate : +d.vespene.CollectionRate);
-        forcesData.value_1 = (x == 0 ? +d.minerals.UsedActiveForces : +d.vespene.UsedActiveForces);
+      if (!withinTimeFrame(d.gameloop)) return;
+      currentData.value_1 = (x == 0 ? +d.minerals.Current : +d.vespene.Current);
+      rateData.value_1 = (x == 0 ? +d.minerals.CollectionRate : +d.vespene.CollectionRate);
+      forcesData.value_1 = (x == 0 ? +d.minerals.UsedActiveForces : +d.vespene.UsedActiveForces);
     });
 
     switchElements(currentData);
@@ -138,8 +138,9 @@ function stackedBarChart(divId, dataset, flip) {
     return x / xMax;
   }
 
-  var xPos_1 = (fraction(dataset[0][0].x) * totalWidth) / 2.0;
-  var xPos_2 = (fraction(dataset[1][0].x) * totalWidth) / 2.0;
+  var xPos_1 = (dataset[0][0].x != 0 ? (fraction(dataset[0][0].x) * totalWidth) / 2.0 : 1);
+  var xPos_2 = (dataset[1][0].x != 0 ? (fraction(dataset[1][0].x) * totalWidth) / 2.0 : 1);
+  
   var legend = svg.selectAll('.legend')
     .data(dataset)
     .enter()

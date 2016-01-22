@@ -1,4 +1,7 @@
-function withinTimeFrame(gameloop, timeFrame) {
+function withinTimeFrame(gameloop) {
+  if (timeFrame[0] == 0 && timeFrame[1] == 0) {
+    timeFrame = xExtent;
+  }
   var gl = gameloop / 16.0;
   return (gl >= (timeFrame[0] / 1000) && gl <= (timeFrame[1] / 1000));
 }

@@ -400,3 +400,12 @@ td, th {
         width: 352px;
         height: 352px;
       }
+
+      #donut_charts {
+        display: inline-block;
+      }
+
+      /* Player info thingies - map.html */
+      #player_info {
+        display: inline-block;
+      }
