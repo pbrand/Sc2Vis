@@ -1,36 +1,66 @@
-var viewHeight = 352;
-var viewWidth = 352;
-var linePlotMargin = {top: 20, left: 100, right: 20, bottom: viewHeight - ( (3/4)*viewHeight), left: 40};
+var viewHeight = 402;
+var viewWidth = 402;
+var linePlotMargin = {top: 20, left: 100, right: 20, bottom: viewHeight - ((5/6)*viewHeight), left: 40};
 var selectionPlotMargin = {top: viewHeight - ( (1/6)*viewHeight), right: 20, bottom: 20, left: 40};
 var lpWidth = viewWidth - linePlotMargin.left - linePlotMargin.right;
 var lpHeight = viewHeight - linePlotMargin.top - linePlotMargin.bottom;
-var lpHeight2 = viewHeight - selectionPlotMargin.top - selectionPlotMargin.bottom;
-
+var lpHeight2 = viewHeight;// - selectionPlotMargin.top - selectionPlotMargin.bottom;
 
 var data1 = []; var data2 = [];var allData =[];
 var resource = 'minerals'; var stat = 'CollectionRate';
-prepareData(resource, stat);
+prepareData();
 
-var xExtent = d3.extent(allData, function(d) { return d['gameloop'] });
-var yExtent = d3.extent(allData, function(d) { return d[stat] }); 
+var xExtent, x, y, x2, y2, xAxis, xAxis2, yAxis, brush, scatterPlotSvg, focus;
+function initPlot() {
+  xExtent = d3.extent(allData, function(d) { return d['gameloop'] });
+  yExtent = d3.extent(allData, function(d) { return d[stat] }); 
 
-var x = d3.time.scale()
-    .domain(xExtent).nice()
-    .range([0, lpWidth]);
+  x = d3.time.scale()
+      .domain(xExtent).nice()
+      .range([0, lpWidth]);
 
-var y = d3.scale.linear()
-    .domain(yExtent).nice()
-    .range([lpHeight, 0]);
+  y = d3.scale.linear()
+      .domain(yExtent).nice()
+      .range([lpHeight, 0]);
+      
+  x2 = d3.scale.linear()
+      .domain([0, d3.max(allData, function(d) { return d['gameloop'] })])
+      .range([0, lpWidth]);
+
+  y2 = d3.scale.linear()
+      .domain(y.domain())
+      .range([lpHeight2, 0]);
+
+  xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    //.ticks(d3.time.minute, 1)
+    .tickFormat(d3.time.format('%M:%S'));
     
-var x2 = d3.scale.linear()
-    .domain([0, d3.max(allData, function(d) { return d['gameloop'] })])
-    .range([0, lpWidth]);
+  xAxis2 = d3.svg.axis()
+       .scale(x2)
+       .orient("bottom");
 
-var y2 = d3.scale.linear()
-    .domain(y.domain())
-    .range([lpHeight2, 0]);
+  yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+      
+  brush = d3.svg.brush()
+      .x(x2)
+      .extent(timeFrame)
+      .on("brush", brushed);
 
-function prepareData(resource, stat) {
+  scatterPlotSvg = d3.select("#scatterplot").select("svg")
+      .attr("width", viewWidth)
+      .attr("height", viewHeight - 42);
+
+  focus = scatterPlotSvg.append("g")
+      .attr("player", "focus")
+      .attr("transform", "translate(" + linePlotMargin.left + "," + linePlotMargin.top + ")");
+}
+
+function prepareData() {
+  data1 = []; data2 = [];
   for(var e in economy[0]) {
     var d = {};
     d['gameloop'] = economy[0][e].gameloop / 16.0 * 1000;
@@ -46,55 +76,6 @@ function prepareData(resource, stat) {
   allData = data1.concat(data2);
 }
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom")
-    //.ticks(d3.time.minute, 1)
-    .tickFormat(d3.time.format('%M:%S'));
-    
-var xAxis2 = d3.svg.axis()
-     .scale(x2)
-     .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-    
-var brush = d3.svg.brush()
-    .x(x2)
-    .extent(timeFrame)
-    .on("brush", brushed);
-
-var scatterPlotSvg = d3.select("#scatterplot").append("svg")
-    .attr("width", viewWidth)
-    .attr("height", viewHeight);
-
-var focus = scatterPlotSvg.append("g")
-    .attr("player", "focus")
-    .attr("transform", "translate(" + linePlotMargin.left + "," + linePlotMargin.top + ")");
-
-/*var context = scatterPlotSvg.append("g")
-    .attr("player", "context")
-    .attr("transform", "translate(" + selectionPlotMargin.left + "," + selectionPlotMargin.top + ")");*/
-
-var defs = scatterPlotSvg.append( "defs" ).append("clipPath")
-    .attr("id", "clip")
-  .append("rect")
-    .attr("width", lpWidth)
-    //.attr("width", window.innerWidth/2 - selectionPlotMargin.left - selectionPlotMargin.right - 40) // Don't want to hard-code this, but d3 left me no choice
-    .attr("height", viewHeight);
-    //console.log(window.innerWidth);
-
-var line = d3.svg.line()
-             .x(function(d){ return x(d['gameloop']); }) //+(d.tsync));})
-             .y(function(d){ return y(d[stat]); })  //d3.format(".3f")(d.DD));})
-             .interpolate("basis"); 
-
-var line2 = d3.svg.line()
-             .x(function(d){return x2(d['gameloop']) }) //+(d.tsync));})
-             .y(function(d){return y2(d[stat]) })  //d3.format(".3f")(d.DD));})
-             .interpolate("basis");
-
 var firstTime = true;
 function drawScatterplot(resetDomain) {
   if (resetDomain === 'undefined') resetDomain = false;
@@ -102,13 +83,15 @@ function drawScatterplot(resetDomain) {
     x2.domain([0, d3.max(allData, function(d) { return d['gameloop'] })]);
   }
 
-  focus.selectAll("g").remove();
-  focus.selectAll(".line").remove();
-  focus.selectAll(".line2").remove();
-  
-  /*context.selectAll("g").remove();
-  context.selectAll(".line").remove();
-  context.selectAll(".line2").remove();*/
+  var line = d3.svg.line()
+             .x(function(d){ return x(d['gameloop']); }) //+(d.tsync));})
+             .y(function(d){ return y(d[stat]); })  //d3.format(".3f")(d.DD));})
+             .interpolate("basis"); 
+
+  var line2 = d3.svg.line()
+               .x(function(d){return x2(d['gameloop']) }) //+(d.tsync));})
+               .y(function(d){return y2(d[stat]) })  //d3.format(".3f")(d.DD));})
+               .interpolate("basis");
 
   focus.append("g")
       .attr("id", "xAxis")
@@ -134,7 +117,7 @@ function drawScatterplot(resetDomain) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text(stat);
+      .text(convertCamelCase(stat));
 
   focus.append("path")
       .attr("class", "line")
@@ -154,53 +137,6 @@ function drawScatterplot(resetDomain) {
       .style("stroke", saturateColor(player2_Color,100))
       .style("fill", "none");
 
-      
-  /*context.append("g")
-      .attr("id", "xAxis")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + lpHeight2 + ")")
-      .call(xAxis2)
-    .append("text")
-      .attr("class", "label")
-      .attr("id", "xLabel")
-      .attr("x", lpWidth)
-      .attr("y", -6)
-      .style("text-anchor", "end")
-      .text("Time (s)");
-
-  context.append("g")
-      .attr("id", "yAxis")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("id", "yLabel")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text(stat);
-
-    context.append("path")
-      .attr("class", "line")
-      .attr("d", line2(data2))
-      .attr("data-legend", "radiant")
-      .attr("clip-path", "url(#clip)")
-      .style("stroke-width", 1)
-      .style("stroke", "green")
-      .style("fill", "none");
-
-      
-  context.append("path")
-    .attr("class", "line2")
-    .attr("d", line2(data2))
-    .attr("data-legend", "dire")
-    .attr("clip-path", "url(#clip)")
-      .style("stroke-width", 1)
-      .style("stroke", "red")
-      .style("fill", "none");
-      
-      */
       focus.append("g")
       .attr("class", "x brush")
       .call(brush)
@@ -278,7 +214,6 @@ if(!running){
   }
 }
 
-brushed();
 function brushed() {
   x.domain(brush.empty() ? x2.domain() : brush.extent());
   /*focus.select(".line").attr("d", line(data1));
@@ -295,6 +230,10 @@ function brushed() {
 }
 
 function resizeScatterplot() {
+  $('#scatterplot svg').html("")
+  prepareData();
+  initPlot();
+
   firstTime = false;
   linePlotMargin = {top: 20, right: 20, bottom: viewHeight - ( (3/4)*viewHeight), left: 40};
   selectionPlotMargin = {top: viewHeight - ( (1/6)*viewHeight), right: 20, bottom: 20, left: 40};
@@ -310,19 +249,22 @@ function resizeScatterplot() {
   xAxis.scale(x);
   yAxis.scale(y);
   xAxis2.scale(x2);
-  
-  defs
-    .attr("width", lpWidth);
-  d3.select("#scatterplot").select("svg")
-    .attr("width", viewWidth)
-    .attr("height", viewHeight);
-  focus
-    .attr("transform", "translate(" + linePlotMargin.left + "," + linePlotMargin.top + ")");
-  /*context
-    .attr("transform", "translate(" + selectionPlotMargin.left + "," + selectionPlotMargin.top + ")");*/
+
+  var totalBrush = d3.extent(allData, function(d) { return d['gameloop'] });
+  var newBrush = (timeFrame[0] == totalBrush[0] && timeFrame[1] == totalBrush[1]) ? [0,0] : timeFrame;
   brush
-    .extent(timeFrame);
+    .extent(newBrush);
 
   drawScatterplot();
+  brushed();
 }
-drawScatterplot();
+resizeScatterplot();
+
+function showLineData() {
+  var selectType = document.getElementById("select_type");
+  var selectLine = document.getElementById("select_line");
+
+  resource = selectType.value;
+  stat = selectLine.value;
+  resizeScatterplot();
+}

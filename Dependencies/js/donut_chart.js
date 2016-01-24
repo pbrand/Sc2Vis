@@ -79,7 +79,12 @@ function initCheck(tempData_) {
 
 // Function to create a donut chart
 function donut_chart(divId, tempData_, flip) {
-  if (initCheck(tempData_)) return;
+  var elem = $(divId);
+  if (initCheck(tempData_)) {
+    elem.hide();
+    return;
+  }
+  elem.show();
   var color = switchColors(flip);
 
   var svg = d3.select(divId)
@@ -135,9 +140,9 @@ function donut_chart(divId, tempData_, flip) {
       return (d.enabled) ? d.value : 0;
     }));
     var percent = Math.round(1000 * d.data.value / total) / 10;
-    tooltip.select('.label').html(d.data.label);
-    tooltip.select('.count').html(d.data.count); 
-    tooltip.select('.percent').html(percent + '%'); 
+    tooltip.select('.label').html();
+    tooltip.select('.count').html("<b>" + d.data.key + "</b>: " + d.data.value); 
+    tooltip.select('.percent').html("<b>Percentage</b>: " + percent + '%'); 
     tooltip.style('display', 'block');
   });
   
