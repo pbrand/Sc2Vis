@@ -194,6 +194,18 @@ class Sc2ReplayParser:
                     if unit_id in previous_loop[user_id].keys():
                         previous_loop[user_id][unit_id]['isDone'] = True
                         output_list[user_id][event['_gameloop']] = copy.deepcopy(previous_loop[user_id])
+            elif event['_eventid'] == 8:
+                unitIndex = event['m_firstUnitIndex']
+                for i in xrange(0, len(event['m_items']), 3):
+                    unitIndex += event['m_items'][i + 0]
+                    x = event['m_items'][i + 1] * 4
+                    y = event['m_items'][i + 2] * 4
+                    for user_id in previous_loop:
+                    # UnitDone event so set isDone to True for that unit
+                        if unit_id in previous_loop[user_id].keys():
+                            previous_loop[user_id][unit_id]['x'] = x
+                            previous_loop[user_id][unit_id]['x'] = y
+                            output_list[user_id][event['_gameloop']] = copy.deepcopy(previous_loop[user_id])
 
 # Function changes the first character of a string to lower case.
 first_char_to_lower = lambda s: s[:1].lower() + s[1:] if s else ''
