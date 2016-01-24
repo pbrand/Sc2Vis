@@ -1,14 +1,27 @@
-var startTime = 1200, endTime = 1300;
-var width = 360 / 2;
-var height = 360 / 2;
-var radius = Math.min(width, height) / 2;
-var donutWidth = 75 / 2;
+var dcWidth = 360 / 2;
+var dcHeight = 360 / 2;
+var radius = Math.min(dcWidth, dcHeight) / 2;
+var donutdcWidth = 75 / 2;
 var legendRectSize = 18;
 var legendSpacing = 4;
 
-(function(d3) {
-  'use strict';
+generateDonutCharts();
+function resetDonutCharts() {
+  for (var i = 0; i < 2; i++) {
+    var x_1 = $("#chart_m_" + i + " svg");
+    var x_2 = $("#chart_m_" + i + " .tooltip");
+    x_1.remove();
+    x_2.remove();
 
+    var y_1 = $("#chart_v_" + i + " svg");
+    var y_2 = $("#chart_v_" + i + " .tooltip");
+    y_1.remove();
+    y_2.remove();
+  }
+}
+function generateDonutCharts() {
+  resetDonutCharts();
+  
   for (var x in economy) {
     if (x == 1) break;
     // Take data of current player
@@ -17,7 +30,7 @@ var legendSpacing = 4;
     var mineralsUsed = {}, mineralsLost = {}, vespeneUsed = {}, vespeneLost = {};
 
     playerData.forEach(function(d, i) {
-      if (!withinTimeFrame(d.gameloop, startTime, endTime)) return;
+      if (!withinTimeFrame(d.gameloop)) return;
 
       // Minerals:
       var mineralData = d.minerals;
@@ -53,8 +66,7 @@ var legendSpacing = 4;
       donut_chart("#chart_v_" + v, playerArrayVespene[v], 1);
     }
   }
-
-})(window.d3);
+}
 
 function initCheck(tempData_) {
   var i = 0;
@@ -67,19 +79,24 @@ function initCheck(tempData_) {
 
 // Function to create a donut chart
 function donut_chart(divId, tempData_, flip) {
-  if (initCheck(tempData_)) return;
+  var elem = $(divId);
+  if (initCheck(tempData_)) {
+    elem.hide();
+    return;
+  }
+  elem.show();
   var color = switchColors(flip);
 
   var svg = d3.select(divId)
     .append('svg')
-    .attr('width', width)
-    .attr('height', height)
+    .attr('width', dcWidth)
+    .attr('height', dcHeight)
     .append('g')
-    .attr('transform', 'translate(' + (width / 2) + 
-      ',' + (height / 2) + ')');
+    .attr('transform', 'translate(' + (dcWidth / 2) + 
+      ',' + (dcHeight / 2) + ')');
 
   var arc = d3.svg.arc()
-    .innerRadius(radius - donutWidth)
+    .innerRadius(radius - donutdcWidth)
     .outerRadius(radius);
 
   var pie = d3.layout.pie()
@@ -113,7 +130,8 @@ function donut_chart(divId, tempData_, flip) {
     .append('path')
     .attr('d', arc)
     .attr('fill', function(d, i) {
-      return color(d.data.key); 
+      if (d.value > 0)
+        return color(d.data.key); 
     })
     .each(function(d) { this._current = d; });
 
@@ -122,9 +140,9 @@ function donut_chart(divId, tempData_, flip) {
       return (d.enabled) ? d.value : 0;
     }));
     var percent = Math.round(1000 * d.data.value / total) / 10;
-    tooltip.select('.label').html(d.data.label);
-    tooltip.select('.count').html(d.data.count); 
-    tooltip.select('.percent').html(percent + '%'); 
+    tooltip.select('.label').html();
+    tooltip.select('.count').html("<b>" + d.data.key + "</b>: " + d.data.value); 
+    tooltip.select('.percent').html("<b>Percentage</b>: " + percent + '%'); 
     tooltip.style('display', 'block');
   });
   
@@ -143,10 +161,10 @@ function donut_chart(divId, tempData_, flip) {
     .append('g')
     .attr('class', 'legend')
     .attr('transform', function(d, i) {
-      var height = legendRectSize + legendSpacing;
-      var offset =  height * color.domain().length / 2;
+      var dcHeight = legendRectSize + legendSpacing;
+      var offset =  dcHeight * color.domain().length / 2;
       var horz = -2 * legendRectSize;// - 30;
-      var vert = i * height - offset;
+      var vert = i * dcHeight - offset;
       return 'translate(' + horz + ',' + vert + ')';
     });
 
