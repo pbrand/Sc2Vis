@@ -1,26 +1,94 @@
-<!doctype html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Map Overview</title>
+    <link rel="stylesheet" href="../Dependencies/css/style.css">
+  </head>
+  <body>
+    <h1>StarCraft 2 - Game Analytics Visualization</h1>
 
-<html lang="en">
-<head>
-  <meta charset="utf-8">
+    <div id="container">
+      <!-- Select match -->
+      <div id="match_selection">
+        Choose your data: 
+        <select id="matchBox" onchange="select_match()">
+          <option value="ggtracker_6391229">6391229</option>
+          <option value="ggtracker_6391832">6391832</option>
+          <option value="ggtracker_6393723">6393723</option>
+          <option value="ggtracker_6394981">6394981</option>
+          <option value="ggtracker_6395050">6395050</option>
+          <option value="ggtracker_6395082">6395082</option>
+          <option value="ggtracker_6395436">6395436</option>
+          <option value="ggtracker_6395482">6395482</option>
+        </select> 
+      </div>
 
-  <title>Sci2Vis</title>
-  <meta name="description" content="Sci2Vis">
+      <!-- Line plot -->
+      <div id="scatterplot">
+        <svg></svg>
+        <select id="select_type" onchange="showLineData()">
+          <option value="minerals">Minerals</option>
+          <option value="vespene">Vespene</option>
+        </select>
+        <select id="select_line" onchange="showLineData()">
+          <option value="CollectionRate">Collection Rate</option>
+          <option value="Current">Current</option>
+          <option value="UsedActiveForces">Used Active Forces</option>
+        </select>
+      </div>
 
-  <link rel="stylesheet" types="text/css" href="../Dependencies/css/style.css">
-  <script src="../Dependencies/js/d3.min.js" />
-</head>
+      <!-- Map of the game -->
+      <div id="map"></div>
 
-<body>
-	<!-- Map Overview -->
-	<div id="map"></div>
+      <!-- Donut charts -->
+      <div id="donut_charts">
+        <div id="mineral_donuts">
+          <div id="chart_m_0">
+            <div class="chart_title">Current used Minerals</div>
+          </div>
+          <div id="chart_m_1">
+            <div class="chart_title">Lost Minerals</div>
+          </div>
+        </div>
+        <div id="vespene_donuts">
+          <div id="chart_v_0">
+            <div class="chart_title">Current used Vespene</div>
+          </div>
+          <div id="chart_v_1">
+            <div class="chart_title">Lost Vespene</div>
+          </div>
+        </div>
+      </div>
 
-	<!-- Game Economics -->
-	<div id="economics"></div>
+      <!-- Title -->
+      <h2>General Statistics</h2>
 
-	<!-- Military Might -->
-	<div id="military"></div>
-</body>
+      <!-- Bar charts (vertical) -->
+      <div id="statistics_bars">
+        <div id="bar_s_m_0">
+          <div class="chart_title"><b>Statistics Minerals</b></div>
+        </div>
+        <div id="bar_s_m_1">
+          <div class="chart_title"><b>Statistics Vespene</b></div>
+        </div>
+      </div>
 
+      <!-- Bar charts (horizontal) -->
+      <div id="food_bar">
+        <div class="chart_title"><b>Statistics of food used/made</b></div>
+      </div>
+    </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script id="current_data" src="../Data/JSON/ggtracker_6391229.js"></script>
+    <script src="../Dependencies/js/d3.min.js"></script>
+    <script src="../Dependencies/js/init.js"></script>
+    <script src="../Dependencies/js/functions.js"></script>
+    <script defer src="../Dependencies/js/map.js"></script>
+    <script defer src="../Dependencies/js/donut_chart.js"></script>
+    <script defer src="../Dependencies/js/plot.js"></script>
+    <script defer src="../Dependencies/js/player_info.js"></script>
+    <script defer src="../Dependencies/js/bar_chart.js"></script>
+  </body>
 </html>

@@ -51,6 +51,7 @@ class Sc2ReplayParser:
     
     def __collect_data(self):
         # read replay data:
+        self.__replay_init_data = self.__reader.get_replay_init_data()
         self.__replay_header = self.__reader.get_replay_header()
         self.__replay_details = self.__reader.get_replay_details()
         self.__tracker_events = self.__reader.get_replay_tracker_events()
@@ -86,6 +87,11 @@ class Sc2ReplayParser:
     def __parse_replay_details(self, output_list):
         output_list['elapsedGameLoops'] = self.__replay_header['m_elapsedGameLoops']
         output_list['baseBuild'] = self.__reader.get_replay_protocol_version()
+        #mapInfo = {}
+        #mapInfo['mapName'] = self.__replay_details['m_title']
+        #mapInfo['mapSizeX'] = self.__replay_init_data['m_syncLobbyState']['m_gameDescription']['m_mapSizeX']
+        #mapInfo['mapSizeY'] = self.__replay_init_data['m_syncLobbyState']['m_gameDescription']['m_mapSizeY']
+        #output_list['mapInfo'] = mapInfo
         output_list['mapName'] = self.__replay_details['m_title']
         output_list['gameStart'] = (self.__replay_details['m_timeUTC'] / 10000000) - 11644473600 # Found at https://github.com/karlgluck/heroes-of-the-storm-replay-parser
         last_registered_game_loop = self.__tracker_events[-1]['_gameloop'] 
