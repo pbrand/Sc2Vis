@@ -365,7 +365,7 @@ td, th {
         position: absolute;
         text-align: center;
         top: 95px;
-        width: 60%;
+        width: 40%;
         z-index: 10;
       }
       .legend {
@@ -448,17 +448,33 @@ td, th {
       #donut_charts {
         float: right;
       }
+      #donut_charts > div:not(#donut_legenda, #donut_legenda_title) {
+        margin-bottom: 20px;
+      }
+      #donut_players {
+        text-align: center;
+        width: 100%;
+      }
+      #donut_player_0, #donut_player_1 {
+        display: inline-block;
+        width: 100%;
+        font-weight: bold;
+      }
       #mineral_donuts, #vespene_donuts {
         position: relative;
         text-align: center;
         width: 100%;
       }
-      #mineral_donuts > div, #vespene_donuts > div {
+      #mineral_donuts > div:not(#donut_player_0), #vespene_donuts > div:not(#donut_player_1) {
+        width: 22%;
+        display: inline-block;
+      }
+      /*#mineral_donuts > div, #vespene_donuts > div {
         position: relative;
         display: inline-block;
         margin-left: 2%;
         margin-right: 2%;
-      }
+      }*/
 
       /* Player info thingies - map.html */
       #statistics_bars > div {
@@ -491,4 +507,36 @@ td, th {
 
       div#match_selection {
         text-align: center;
+      }
+
+      #legenda_ {
+        border: solid black 1px;
+        margin-top: 25px;
+      }
+      #donut_legenda > div {
+        width: 23%;
+        display: inline-block;
+      }
+      .legendaItem {
+        display: inline-block;
+        width: 100%;
+        font-size: 10pt;
+        padding-bottom: 10px;
+      }
+      .legendaItemRect {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+      }
+      #donut_legenda_title {
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      .donut_legenda_t {
+        display: inline-block;
+        width: 47%;
+      }
+      #donut_legenda_m1 {
+        border-right: black dotted 2px;
       }

@@ -1,3 +1,33 @@
+var minerals_current = d3.scale.ordinal().domain(["Army", "Economy", "Technology"]).range(["#637939", "#8ca252", "#b5cf6b"]);
+var minerals_lost = d3.scale.ordinal().domain(["Lost", "Friendly Fire", "Killed"]).range(["#8c6d31", "#bd9e39", "#e7ba52"]);
+var vespene_current = d3.scale.ordinal().domain(["Army", "Economy", "Technology"]).range(["#843c39", "#ad494a", "#d6616b"]);
+var vespene_lost = d3.scale.ordinal().domain(["Lost", "Friendly Fire", "Killed"]).range(["#7b4173", "#a55194", "#ce6dbd"]);
+
+function createLegenda(flip, color) {
+  var donutLegenda = $("#donut_legenda_" + flip);
+  if (donutLegenda.html() !== "") return;
+
+  color.domain().forEach(function(d, i) {
+    var legendaText = d, legendaColor = color.range()[i];
+
+    var divElem = document.createElement("div");
+    divElem.className = "legendaItem";
+
+    var divRect = document.createElement("div");
+    divRect.className = "legendaItemRect";
+    divRect.style.backgroundColor = legendaColor;
+
+    var divText = document.createElement("div");
+    divText.className = "legendaItemText";
+    divText.innerHTML = legendaText;
+
+    divElem.appendChild(divRect);
+    divElem.appendChild(divText);
+
+    donutLegenda.append(divElem);
+  });
+}
+
 function withinTimeFrame(gameloop) {
   if (timeFrame[0] == 0 && timeFrame[1] == 0) {
     if (typeof xExtent !== 'undefined') {
@@ -9,9 +39,23 @@ function withinTimeFrame(gameloop) {
 }
 
 function switchColors(flip) {
-  var color = d3.scale.ordinal().range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]);
-  if (flip == 1) color = d3.scale.ordinal().range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"].reverse());
-  return color;
+  var returnColor;
+  switch (flip) {
+    case "m0":
+      returnColor = minerals_current;
+      break;
+    case "m1":
+      returnColor = minerals_lost;
+      break;
+    case "v0":
+      returnColor = vespene_current;
+      break;
+    case "v1":
+      returnColor = vespene_lost;
+      break;
+  }
+  createLegenda(flip, returnColor);
+  return returnColor;
 }
 
 // COLOR SATURATION

@@ -1,29 +1,31 @@
-var dcWidth = 360 / 2;
-var dcHeight = 360 / 2;
+var dcWidth = 300 / 2 / 2;
+var dcHeight = 300 / 2 / 2;
 var radius = Math.min(dcWidth, dcHeight) / 2;
-var donutdcWidth = 75 / 2;
+var donutdcWidth = 75 / 2 / 2;
 var legendRectSize = 18;
 var legendSpacing = 4;
 
 generateDonutCharts();
 function resetDonutCharts() {
   for (var i = 0; i < 2; i++) {
-    var x_1 = $("#chart_m_" + i + " svg");
-    var x_2 = $("#chart_m_" + i + " .tooltip");
-    x_1.remove();
-    x_2.remove();
+    for (var j = 0; j < 2; j++) {
+      var x_1 = $("#chart_" + j + "_m_" + i + " svg");
+      var x_2 = $("#chart_" + j + "_m_" + i + " .tooltip");
+      x_1.remove();
+      x_2.remove();
 
-    var y_1 = $("#chart_v_" + i + " svg");
-    var y_2 = $("#chart_v_" + i + " .tooltip");
-    y_1.remove();
-    y_2.remove();
+      var y_1 = $("#chart_" + j + "_v_" + i + " svg");
+      var y_2 = $("#chart_" + j + "_v_" + i + " .tooltip");
+      y_1.remove();
+      y_2.remove();
+    }
   }
 }
 function generateDonutCharts() {
   resetDonutCharts();
   
   for (var x in economy) {
-    if (x == 1) break;
+    // if (x == 1) break;
     // Take data of current player
     var playerData = economy[x];
     var playerArrayMinerals = [], playerArrayVespene = [];
@@ -59,13 +61,18 @@ function generateDonutCharts() {
     playerArrayVespene.push(vespeneUsed); playerArrayVespene.push(vespeneLost);
 
     for (var m = 0; m < playerArrayMinerals.length; m++) {
-      donut_chart("#chart_m_" + m, playerArrayMinerals[m], 0);
+      donut_chart("#chart_" + x + "_m_" + m, playerArrayMinerals[m], "m" + m);
     }
 
     for (var v = 0; v < playerArrayVespene.length; v++) {
-      donut_chart("#chart_v_" + v, playerArrayVespene[v], 1);
+      donut_chart("#chart_" + x + "_v_" + v, playerArrayVespene[v], "v" + v);
     }
   }
+
+  $("#donut_player_0").html(player1_Name);
+  $("#donut_player_1").html(player2_Name);
+  $("#donut_player_0").css("color", saturateColor(player1_Color, 100));
+  $("#donut_player_1").css("color", saturateColor(player2_Color, 100));
 }
 
 function initCheck(tempData_) {
@@ -152,62 +159,62 @@ function donut_chart(divId, tempData_, flip) {
 
   path.on('mousemove', function(d) {
     tooltip.style('top', (d3.event.layerY + 10) + 'px')
-      .style('left', (d3.event.layerX + 10) + 'px');
+      .style('left', (d3.event.layerX - 190) + 'px');
   });
     
-  var legend = svg.selectAll('.legend')
-    .data(color.domain())
-    .enter()
-    .append('g')
-    .attr('class', 'legend')
-    .attr('transform', function(d, i) {
-      var dcHeight = legendRectSize + legendSpacing;
-      var offset =  dcHeight * color.domain().length / 2;
-      var horz = -2 * legendRectSize;// - 30;
-      var vert = i * dcHeight - offset;
-      return 'translate(' + horz + ',' + vert + ')';
-    });
+  // var legend = svg.selectAll('.legend')
+  //   .data(color.domain())
+  //   .enter()
+  //   .append('g')
+  //   .attr('class', 'legend')
+  //   .attr('transform', function(d, i) {
+  //     var dcHeight = legendRectSize + legendSpacing;
+  //     var offset =  dcHeight * color.domain().length / 2;
+  //     var horz = -2 * legendRectSize;// - 30;
+  //     var vert = i * dcHeight - offset;
+  //     return 'translate(' + horz + ',' + vert + ')';
+  //   });
 
-  legend.append('rect')
-    .attr('width', legendRectSize)
-    .attr('height', legendRectSize)                                   
-    .style('fill', color)
-    .style('stroke', color)
-    .on('click', function(key) {
-      var rect = d3.select(this);
-      var enabled = true;
-      var totalEnabled = d3.sum(dataset.map(function(d) {
-        return (d.enabled) ? 1 : 0;
-      }));
+  // legend.append('rect')
+  //   .attr('width', legendRectSize)
+  //   .attr('height', legendRectSize)                                   
+  //   .style('fill', color)
+  //   .style('stroke', color)
+  //   .on('click', function(key) {
+  //     var rect = d3.select(this);
+  //     var enabled = true;
+  //     var totalEnabled = d3.sum(dataset.map(function(d) {
+  //       return (d.enabled) ? 1 : 0;
+  //     }));
       
-      if (rect.attr('class') === 'disabled') {
-        rect.attr('class', '');
-      } else {
-        if (totalEnabled < 2) return;
-        rect.attr('class', 'disabled');
-        enabled = false;
-      }
-      pie.value(function(d) {
-        if (d.key === key) d.enabled = enabled;
-        return (d.enabled) ? d.value : 0;
-      });
+  //     if (rect.attr('class') === 'disabled') {
+  //       rect.attr('class', '');
+  //     } else {
+  //       if (totalEnabled < 2) return;
+  //       rect.attr('class', 'disabled');
+  //       enabled = false;
+  //     }
+  //     pie.value(function(d) {
+  //       if (d.key === key) d.enabled = enabled;
+  //       return (d.enabled) ? d.value : 0;
+  //     });
 
-      path = path.data(pie(dataset));
+  //     path = path.data(pie(dataset));
       
-      path.transition()
-        .duration(750)
-        .attrTween('d', function(d) {
-          var interpolate = d3.interpolate(this._current, d);
-          this._current = interpolate(0);
-          return function(t) {
-            return arc(interpolate(t));
-          };
-        });
+  //     path.transition()
+  //       .duration(750)
+  //       .attrTween('d', function(d) {
+  //         var interpolate = d3.interpolate(this._current, d);
+  //         this._current = interpolate(0);
+  //         return function(t) {
+  //           return arc(interpolate(t));
+  //         };
+  //       });
       
-    });
+  //   });
     
-  legend.append('text')
-    .attr('x', legendRectSize + legendSpacing)
-    .attr('y', legendRectSize - legendSpacing)
-    .text(function(d) { return d; });
+  // legend.append('text')
+  //   .attr('x', legendRectSize + legendSpacing)
+  //   .attr('y', legendRectSize - legendSpacing)
+  //   .text(function(d) { return d; });
 }
