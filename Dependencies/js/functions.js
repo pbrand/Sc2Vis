@@ -70,7 +70,6 @@ function typeToDescription(type, category) {
 function select_match() {
     var e = document.getElementById("matchBox");
     var matchID = e.options[e.selectedIndex].value;
-    console.log(matchID);
     // replace data file
     var currentMatch = '../Data/JSON/'+document.getElementById("current_data").src;
     currentMatch = currentMatch.split('/Data/JSON/')[2];
@@ -128,7 +127,6 @@ function strip(html) {
 changeResults();
 function changeResults() {
   for (var i = 0; i < 2; i++) {
-    console.log(details.playerList[i].result);
     var htmlVar = "LOSER", classVar = "loser";
     if (details.playerList[i].result > 1) {
       htmlVar = "WINNER";

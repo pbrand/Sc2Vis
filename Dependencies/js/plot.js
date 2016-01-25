@@ -32,11 +32,9 @@ function initPlot() {
       .range([lpHeight2, 0]);
 
   var v_ = Math.ceil(getMinutes(xExtent[1]) / 5);
-  console.log(getMinutes(xExtent[1]));
   xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
-    //.ticks(d3.time.minute, 1)
     .ticks(d3.time.minutes, v_)
     .tickFormat(d3.time.format('%M:%S'));
     
@@ -226,8 +224,9 @@ function brushed() {
   timeFrame = brush.extent();
   initMap();
   generateDonutCharts();
-  initBarCharts();
-
+  if (typeof initBarCharts !== 'undefined') { 
+    initBarCharts();
+  }
   // Redraw
   if (typeof redraw !== 'undefined') {
     redraw();

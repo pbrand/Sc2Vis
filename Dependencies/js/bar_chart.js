@@ -117,6 +117,8 @@ function getDataSet(tempData_, cat) {
 // ------------ ACTUAL FUNCTION ------------- \\
 var groups;
 function stackedBarChart(divId, dataset, flip) {
+  if (dataset === [] || typeof dataset[0] === 'undefined')
+    return;
   if ((dataset[0][0].x == 0 && dataset[0][0].x0 == 0) || (dataset[1][0].x == 0 && dataset[1][0].x0 == 0))
     return;
   var width = "100%";
