@@ -540,3 +540,14 @@ td, th {
       #donut_legenda_m1 {
         border-right: black dotted 2px;
       }
+
+      .player_race_icon, .player_race_icon > img {
+        width: 58px;
+        height: 58px;
+      }
+      .player_race_icon {
+        float: left;
+        margin-left: 30px;
+        position: absolute;
+        margin-top: -10px;
+      }

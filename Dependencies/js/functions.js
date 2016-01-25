@@ -183,6 +183,7 @@ function changeResults() {
       el.className = classVar;
     }
     $("#player_" + i + " .player_status").html(htmlVar);
+    $("#player_" + i + "_img").attr("src", "../Dependencies/imgs/races/" + details.playerList[i].race + ".png");
   }
 }
 
