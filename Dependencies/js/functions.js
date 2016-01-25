@@ -109,6 +109,7 @@ function waitForDataLoad() {
 
       svgMapImg = undefined;
       reloadInit();
+      changeResults();
       resizeScatterplot();
       initMap();
       generateDonutCharts();
@@ -116,4 +117,33 @@ function waitForDataLoad() {
     } else {
       setTimeout(waitForDataLoad, 1000);
     }
+}
+
+function strip(html) {
+  var tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText;
+}
+
+changeResults();
+function changeResults() {
+  for (var i = 0; i < 2; i++) {
+    console.log(details.playerList[i].result);
+    var htmlVar = "LOSER", classVar = "loser";
+    if (details.playerList[i].result > 1) {
+      htmlVar = "WINNER";
+      classVar = "winner";
+    }
+
+    $("#player_" + i + " .player_name").html(strip(details.playerList[i].name));
+    var el = document.getElementById('player_' + i);
+    if (el) {
+      el.className = classVar;
+    }
+    $("#player_" + i + " .player_status").html(htmlVar);
+  }
+}
+
+function getMinutes(ms) {
+  return (ms/1000/60) << 0;
 }
