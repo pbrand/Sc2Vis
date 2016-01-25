@@ -389,12 +389,36 @@ td, th {
         font-size: 30px;                                              /* NEW */
         text-align: center;                                           /* NEW */
       }    
-      h2 {
-        font-size: 25px;
-        text-align: center;
-        /*padding-top: 15px;*/
+
+      #mid_bar {
+        padding-top: 10px;
+        margin: 0.67em 0;
         display: inline-block;
         width: 100%;
+      }
+      #mid_bar > div {
+        display: inline-block;
+        width: 33%;
+        text-align: center;
+        padding: 10px 0px;
+      }
+      #mid_title {
+        font-size: 25px;
+      }
+      .player_name {
+        font-size: 20px;
+        font-weight: bold;
+        letter-spacing: 0.3em;
+      }
+      .player_status {
+        font-size: 10pt;
+        text-decoration: underline;
+      }
+      .loser {
+        background-color: red;
+      }
+      .winner  {
+        background-color: green;
       }
 
       /* ### Big divs */

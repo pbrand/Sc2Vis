@@ -33,6 +33,4 @@ function reloadInit() {
 
 	// Time frame (edited by brush )
 	timeFrame = [0, 0];
-
-	
 }

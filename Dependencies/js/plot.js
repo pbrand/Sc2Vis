@@ -31,10 +31,11 @@ function initPlot() {
       .domain(y.domain())
       .range([lpHeight2, 0]);
 
+  var v_ = Math.ceil(getMinutes(xExtent[1]) / 5);
   xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
-    //.ticks(d3.time.minute, 1)
+    .ticks(d3.time.minutes, v_)
     .tickFormat(d3.time.format('%M:%S'));
     
   xAxis2 = d3.svg.axis()
@@ -51,12 +52,12 @@ function initPlot() {
       .on("brush", brushed);
 
   scatterPlotSvg = d3.select("#scatterplot").select("svg")
-      .attr("width", viewWidth)
+      .attr("width", viewWidth + 10)
       .attr("height", viewHeight - 42);
 
   focus = scatterPlotSvg.append("g")
       .attr("player", "focus")
-      .attr("transform", "translate(" + linePlotMargin.left + "," + linePlotMargin.top + ")");
+      .attr("transform", "translate(" + (linePlotMargin.left + 10) + "," + linePlotMargin.top + ")");
 }
 
 function prepareData() {
@@ -109,6 +110,7 @@ function drawScatterplot(resetDomain) {
   focus.append("g")
       .attr("id", "yAxis")
       .attr("class", "y axis")
+      .attr("transform", "translate(0,0)")
       .call(yAxis)
     .append("text")
       .attr("class", "label")
@@ -222,7 +224,9 @@ function brushed() {
   timeFrame = brush.extent();
   initMap();
   generateDonutCharts();
-
+  if (typeof initBarCharts !== 'undefined') { 
+    initBarCharts();
+  }
   // Redraw
   if (typeof redraw !== 'undefined') {
     redraw();
@@ -235,7 +239,7 @@ function resizeScatterplot() {
   initPlot();
 
   firstTime = false;
-  linePlotMargin = {top: 20, right: 20, bottom: viewHeight - ( (3/4)*viewHeight), left: 40};
+  linePlotMargin = {top: 20, right: 20, bottom: viewHeight - ( (3/4)*viewHeight), left: 50};
   selectionPlotMargin = {top: viewHeight - ( (1/6)*viewHeight), right: 20, bottom: 20, left: 40};
   lpWidth = viewWidth - linePlotMargin.left - linePlotMargin.right;
   lpHeight = viewHeight - linePlotMargin.top - linePlotMargin.bottom;

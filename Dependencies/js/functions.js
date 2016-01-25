@@ -70,7 +70,6 @@ function typeToDescription(type, category) {
 function select_match() {
     var e = document.getElementById("matchBox");
     var matchID = e.options[e.selectedIndex].value;
-    console.log(matchID);
     // replace data file
     var currentMatch = '../Data/JSON/'+document.getElementById("current_data").src;
     currentMatch = currentMatch.split('/Data/JSON/')[2];
@@ -109,6 +108,7 @@ function waitForDataLoad() {
 
       svgMapImg = undefined;
       reloadInit();
+      changeResults();
       resizeScatterplot();
       initMap();
       generateDonutCharts();
@@ -116,4 +116,32 @@ function waitForDataLoad() {
     } else {
       setTimeout(waitForDataLoad, 1000);
     }
+}
+
+function strip(html) {
+  var tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText;
+}
+
+changeResults();
+function changeResults() {
+  for (var i = 0; i < 2; i++) {
+    var htmlVar = "LOSER", classVar = "loser";
+    if (details.playerList[i].result > 1) {
+      htmlVar = "WINNER";
+      classVar = "winner";
+    }
+
+    $("#player_" + i + " .player_name").html(strip(details.playerList[i].name));
+    var el = document.getElementById('player_' + i);
+    if (el) {
+      el.className = classVar;
+    }
+    $("#player_" + i + " .player_status").html(htmlVar);
+  }
+}
+
+function getMinutes(ms) {
+  return (ms/1000/60) << 0;
 }

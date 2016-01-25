@@ -3,15 +3,11 @@ var color = d3.scale.category10();
 
 initBarCharts();
 function initBarCharts() {
-  (function(d3) {
-    'use strict';
+  $("#stackBarElement").remove();
 
-    $("#stackBarElement").remove();
-
-    playerVersus();
-    foodInformation();
-    hoverBars();
-  })(window.d3);
+  playerVersus();
+  foodInformation();
+  hoverBars();
 }
 function hoverBars() {
   // Hover function
@@ -121,6 +117,10 @@ function getDataSet(tempData_, cat) {
 // ------------ ACTUAL FUNCTION ------------- \\
 var groups;
 function stackedBarChart(divId, dataset, flip) {
+  if (dataset === [] || typeof dataset[0] === 'undefined')
+    return;
+  if ((dataset[0][0].x == 0 && dataset[0][0].x0 == 0) || (dataset[1][0].x == 0 && dataset[1][0].x0 == 0))
+    return;
   var width = "100%";
   var color = d3.scale.ordinal().range([saturateColor(player1_Color,90), saturateColor(player2_Color,90)]);
 
