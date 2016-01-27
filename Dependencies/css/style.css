@@ -543,7 +543,7 @@ td, th {
 
       .player_race_icon, .player_race_icon > img {
         width: 58px;
-        height: 58px;
+        height: 56px;
       }
       .player_race_icon {
         float: left;
